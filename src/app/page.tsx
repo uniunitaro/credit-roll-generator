@@ -1,10 +1,19 @@
-import Image from "next/image";
-import { css } from "../../styled-system/css";
+import Image from 'next/image';
+import { css } from '../../styled-system/css';
 
 export default function Home() {
   return (
     <div className={css({ display: 'flex', flexDir: 'column', minH: '100vh' })}>
-      <main className={css({ flex: 1, display: 'flex', flexDir: 'column', alignItems: 'center', justifyContent: 'center', p: '4' })}>
+      <main
+        className={css({
+          flex: 1,
+          display: 'flex',
+          flexDir: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          p: '4',
+        })}
+      >
         <Image
           className={css({ maxW: '100%', h: 'auto' })}
           src="/next.svg"
@@ -31,7 +40,7 @@ export default function Home() {
               bg: 'slate.900',
               color: 'white',
               rounded: 'md',
-              _hover: { bg: 'slate.700' }
+              _hover: { bg: 'slate.700' },
             })}
             href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
             target="_blank"
@@ -58,21 +67,23 @@ export default function Home() {
               border: '1px solid',
               borderColor: 'slate.200',
               rounded: 'md',
-              _hover: { bg: 'slate.100' }
+              _hover: { bg: 'slate.100' },
             })}
           >
             Read our docs
           </a>
         </div>
       </main>
-      <footer className={css({
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '6',
-        py: '4',
-        borderTop: '1px solid',
-        borderColor: 'slate.200'
-      })}>
+      <footer
+        className={css({
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '6',
+          py: '4',
+          borderTop: '1px solid',
+          borderColor: 'slate.200',
+        })}
+      >
         <a
           href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
           target="_blank"
