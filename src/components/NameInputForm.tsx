@@ -1,7 +1,6 @@
 'use client'
 
 import { type FC, useState } from 'react'
-import { css } from '../../styled-system/css'
 import { hstack } from '../../styled-system/patterns'
 import type { Name } from '../types/name'
 import { Button } from './ui/button'
@@ -22,7 +21,7 @@ const NameInputForm: FC<{ onNameAdd: (name: Name) => void }> = ({
   }
 
   return (
-    <div className={css({ mb: '4' })}>
+    <div>
       <div className={hstack({ gap: '2' })}>
         <Input
           value={lastName}
