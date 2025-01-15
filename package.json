@@ -8,7 +8,12 @@
     "build": "next build",
     "start": "next start",
     "format-and-lint": "biome check .",
-    "format-and-lint:fix": "biome check . --write"
+    "format-and-lint:fix": "biome check . --write",
+    "build:worker": "opennextjs-cloudflare",
+    "dev:worker": "wrangler dev --port 8771",
+    "preview": "npm run build:worker && npm run dev:worker",
+    "deploy": "npm run build:worker && wrangler deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
     "@ark-ui/react": "^4.8.1",
@@ -20,12 +25,15 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@opennextjs/cloudflare": "^0.3.8",
     "@pandacss/dev": "^0.51.1",
     "@park-ui/panda-preset": "^0.43.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "caniuse-lite": "^1.0.30001692",
     "postcss": "^8.5.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^3.102.0"
   }
 }
