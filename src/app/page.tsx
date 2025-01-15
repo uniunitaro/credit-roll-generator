@@ -1,5 +1,3 @@
-'use client'
-
 import type { FC } from 'react'
 import { container } from 'styled-system/patterns'
 import CreditRollGenerator from '~/components/CreditRollGenerator'

@@ -12,9 +12,11 @@
   },
   "dependencies": {
     "@ark-ui/react": "^4.8.1",
+    "konva": "^9.3.18",
     "next": "15.1.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-konva": "^19.0.2"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

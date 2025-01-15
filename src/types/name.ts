@@ -1,4 +1,4 @@
 export type Name = {
-  firstName: string;
-  lastName: string;
+  firstName: string
+  lastName: string
 }
