@@ -1,10 +1,12 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { type FC, useState } from 'react'
-import { stack } from 'styled-system/patterns'
+import { grid } from 'styled-system/patterns'
 import type { Name } from '~/types/name'
 import NameInputForm from '../components/NameInputForm'
-import NameList from '../components/NameList'
+
+const NameCanvas = dynamic(() => import('./NameCanvas'), { ssr: false })
 
 const CreditRollGenerator: FC = () => {
   const [names, setNames] = useState<Name[]>([])
@@ -13,9 +15,14 @@ const CreditRollGenerator: FC = () => {
     setNames([...names, name])
   }
   return (
-    <div className={stack({ gap: '4', align: 'start' })}>
+    <div
+      className={grid({
+        gridTemplateColumns: '400px minmax(0, 1fr)',
+        gap: '6',
+      })}
+    >
       <NameInputForm onNameAdd={handleNameAdd} />
-      <NameList names={names} />
+      <NameCanvas names={names} />
     </div>
   )
 }

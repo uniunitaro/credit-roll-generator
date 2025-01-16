@@ -26,12 +26,12 @@ const NameInputForm: FC<{ onNameAdd: (name: Name) => void }> = ({
         <Input
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
-          placeholder="名字"
+          placeholder="姓"
         />
         <Input
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
-          placeholder="名前"
+          placeholder="名"
         />
         <Button onClick={handleSubmit}>追加</Button>
       </div>

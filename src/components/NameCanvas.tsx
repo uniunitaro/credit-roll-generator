@@ -1,18 +1,29 @@
 'use client'
+
 import type { FC } from 'react'
 import { Layer, Stage, Text } from 'react-konva'
-import { css } from '../../styled-system/css'
+import { useMeasure } from 'react-use'
+import { css } from 'styled-system/css'
 
 const NameCanvas: FC<{
   names: { lastName: string; firstName: string }[]
   fontFamily?: string
   fontSize?: number
 }> = ({ names, fontFamily = 'monospace', fontSize = 16 }) => {
-  const width = 1280
-  const height = 720
+  const [ref, { width: containerWidth }] = useMeasure<HTMLDivElement>()
+  console.log('containerWidth', containerWidth)
+  const width = containerWidth || 1280
+  const height = width * (9 / 16)
 
   return (
-    <div className={css({ width: 'full', overflow: 'hidden' })}>
+    <div
+      ref={ref}
+      className={css({
+        borderWidth: 1,
+        borderStyle: 'solid',
+        borderColor: 'border.default',
+      })}
+    >
       <Stage width={width} height={height}>
         <Layer>
           {names.map((name, index) => {
@@ -22,7 +33,7 @@ const NameCanvas: FC<{
               fontFamily,
               fontSize,
             })
-            const yOffset = index * 30 // 名前ごとの縦位置調整
+            const yOffset = index * 30 + 8 // 名前ごとの縦位置調整
 
             return positions.map((pos, i) => (
               <Text
