@@ -1,6 +1,6 @@
 {
   "main": ".open-next/worker.js",
-  "name": "next-app",
+  "name": "credit-roll-generator",
   "compatibility_date": "2025-01-09",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
