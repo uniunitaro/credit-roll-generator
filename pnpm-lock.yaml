@@ -55,6 +55,9 @@ devDependencies:
   caniuse-lite:
     specifier: ^1.0.30001692
     version: 1.0.30001692
+  husky:
+    specifier: ^9.1.7
+    version: 9.1.7
   postcss:
     specifier: ^8.5.1
     version: 8.5.1
@@ -5303,6 +5306,12 @@ packages:
   /human-signals@2.1.0:
     resolution: {integrity: sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==}
     engines: {node: '>=10.17.0'}
+    dev: true
+
+  /husky@9.1.7:
+    resolution: {integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==}
+    engines: {node: '>=18'}
+    hasBin: true
     dev: true
 
   /hyphenate-style-name@1.1.0:

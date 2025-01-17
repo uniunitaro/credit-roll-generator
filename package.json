@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "prepare": "panda codegen",
+    "prepare": "panda codegen && husky",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "format-and-lint": "biome check .",
     "format-and-lint:fix": "biome check . --write",
+    "typecheck": "tsc --noEmit",
     "build:worker": "opennextjs-cloudflare",
     "dev:worker": "wrangler dev --port 8771",
     "preview": "pnpm run build:worker && pnpm run dev:worker",
@@ -35,6 +36,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "caniuse-lite": "^1.0.30001692",
+    "husky": "^9.1.7",
     "postcss": "^8.5.1",
     "typescript": "^5",
     "wrangler": "^3.102.0"
