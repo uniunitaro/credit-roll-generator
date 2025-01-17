@@ -1,17 +1,19 @@
 'use client'
 
+import { useAtomValue } from 'jotai'
 import type { FC } from 'react'
 import { Layer, Stage, Text } from 'react-konva'
 import { useMeasure } from 'react-use'
 import { css } from 'styled-system/css'
+import { allNamesAtom } from '~/atoms/names'
 
 const NameCanvas: FC<{
-  names: { lastName: string; firstName: string }[]
   fontFamily?: string
   fontSize?: number
-}> = ({ names, fontFamily = 'monospace', fontSize = 16 }) => {
+}> = ({ fontFamily = 'monospace', fontSize = 16 }) => {
+  const names = useAtomValue(allNamesAtom)
+
   const [ref, { width: containerWidth }] = useMeasure<HTMLDivElement>()
-  console.log('containerWidth', containerWidth)
   const width = containerWidth || 1280
   const height = width * (9 / 16)
 

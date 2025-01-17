@@ -1,28 +1,44 @@
 'use client'
 
+import { useAtom } from 'jotai'
 import dynamic from 'next/dynamic'
-import { type FC, useState } from 'react'
-import { grid } from 'styled-system/patterns'
-import type { Name } from '~/types/name'
-import NameInputForm from '../components/NameInputForm'
+import { type FC, useCallback } from 'react'
+import { grid, stack } from 'styled-system/patterns'
+import { nameGroupIdsAtom } from '~/atoms/names'
+import NameGroup from './NameGroup'
+import { Button } from './ui/button'
 
 const NameCanvas = dynamic(() => import('./NameCanvas'), { ssr: false })
 
 const CreditRollGenerator: FC = () => {
-  const [names, setNames] = useState<Name[]>([])
+  const [nameGroupIds, setNameGroupIds] = useAtom(nameGroupIdsAtom)
 
-  const handleNameAdd = (name: Name) => {
-    setNames([...names, name])
-  }
+  const handleGroupAdd = useCallback(() => {
+    setNameGroupIds([...nameGroupIds, crypto.randomUUID()])
+  }, [nameGroupIds, setNameGroupIds])
+
+  const handleGroupDelete = useCallback(
+    (groupId: string) => {
+      setNameGroupIds(nameGroupIds.filter((id) => id !== groupId))
+    },
+    [nameGroupIds, setNameGroupIds],
+  )
+
   return (
-    <div
-      className={grid({
-        gridTemplateColumns: '400px minmax(0, 1fr)',
-        gap: '6',
-      })}
-    >
-      <NameInputForm onNameAdd={handleNameAdd} />
-      <NameCanvas names={names} />
+    <div className={grid({ columns: 2, gap: '6' })}>
+      <div className={stack({ gap: '6' })}>
+        <div className={stack({ gap: '6' })}>
+          {nameGroupIds.map((nameGroupId) => (
+            <NameGroup
+              key={nameGroupId}
+              groupId={nameGroupId}
+              onGroupDelete={handleGroupDelete}
+            />
+          ))}
+        </div>
+        <Button onClick={handleGroupAdd}>グループを追加</Button>
+      </div>
+      <NameCanvas />
     </div>
   )
 }

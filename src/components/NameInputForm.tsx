@@ -6,7 +6,7 @@ import type { Name } from '../types/name'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 
-const NameInputForm: FC<{ onNameAdd: (name: Name) => void }> = ({
+const NameInputForm: FC<{ onNameAdd: (name: Omit<Name, 'uuid'>) => void }> = ({
   onNameAdd,
 }) => {
   const [lastName, setLastName] = useState('')
