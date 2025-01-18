@@ -2,20 +2,119 @@
 
 import { useAtomValue } from 'jotai'
 import type { FC } from 'react'
-import { Layer, Stage, Text } from 'react-konva'
+import { Group, Layer, Stage, Text } from 'react-konva'
 import { useMeasure } from 'react-use'
 import { css } from 'styled-system/css'
-import { allNamesAtom } from '~/atoms/names'
+import { allGroupsAtom } from '~/atoms/names'
+import type { GroupWithName } from '~/types/name'
+import { calculatePositionsFromSplitName } from '~/utils/calculatePositions'
+import { getCharacterDimensions } from '~/utils/getCharacterDimensions'
+
+// TODO: 変更可能にする
+const COLUMN_GAP = 30
+
+type GroupWithPosition = {
+  id: string
+  y: number
+  groupName: string
+  names: {
+    id: string
+    y: number
+    positions: { char: string; x: number }[]
+    scale: number
+    width: number
+  }[]
+  characterNames: {
+    id: string
+    y: number
+    name: string
+  }[]
+}
+
+const calculateGroupsWithPositions = ({
+  groups,
+  fontFamily,
+  fontSize,
+  characterFontSize,
+}: {
+  groups: GroupWithName[]
+  fontFamily: string
+  fontSize: number
+  characterFontSize: number
+}): GroupWithPosition[] => {
+  const { height: normalHeight } = getCharacterDimensions({
+    fontFamily,
+    fontSize,
+  })
+  const { height: characterHeight } = getCharacterDimensions({
+    fontFamily,
+    fontSize: characterFontSize,
+  })
+
+  let currentY = 8
+  return groups.map((group) => {
+    const groupStartY = currentY
+
+    const names = group.names.map((name, index) => {
+      const { positions, scale, width } = calculatePositionsFromSplitName({
+        lastName: name.lastName,
+        firstName: name.firstName,
+        fontFamily,
+        fontSize,
+      })
+
+      // FIXME: マジックナンバー！！
+      const nameY = group.groupName ? 30 : 0 // グループ名があれば30px下にずらす
+      return {
+        id: name.id,
+        y: nameY + index * 30,
+        positions,
+        scale,
+        width,
+      }
+    })
+
+    const characterNames = group.names.map((name, index) => {
+      const nameY = group.groupName ? 30 : 0 // グループ名があれば30px下にずらす
+      return {
+        id: name.id,
+        // 声優名とフォントサイズが異なるためキャラクター名が右カラムの声優名の縦中央に表示されるように調整
+        y: nameY + index * 30 + (normalHeight - characterHeight) / 2,
+        name: name.kind === 'character' ? name.character : '',
+      }
+    })
+
+    // グループの高さを計算（最後の名前のY + 30px + 余白）
+    const groupHeight =
+      Math.max(...names.map((n) => n.y)) + 30 + (group.groupName ? 8 : 0)
+    currentY += groupHeight + 30 // 次のグループまでの間隔
+
+    return {
+      id: group.id,
+      y: groupStartY,
+      groupName: group.groupName,
+      names,
+      characterNames,
+    }
+  })
+}
 
 const NameCanvas: FC<{
   fontFamily?: string
   fontSize?: number
-}> = ({ fontFamily = 'monospace', fontSize = 16 }) => {
-  const names = useAtomValue(allNamesAtom)
+  characterFontSize?: number
+}> = ({ fontFamily = 'monospace', fontSize = 16, characterFontSize = 12 }) => {
+  const groups = useAtomValue(allGroupsAtom)
+  const groupsWithPositions = calculateGroupsWithPositions({
+    groups,
+    fontFamily,
+    fontSize,
+    characterFontSize,
+  })
 
   const [ref, { width: containerWidth }] = useMeasure<HTMLDivElement>()
-  const width = containerWidth || 1280
-  const height = width * (9 / 16)
+  const canvasWidth = containerWidth || 1280
+  const canvasHeight = canvasWidth * (9 / 16)
 
   return (
     <div
@@ -26,144 +125,61 @@ const NameCanvas: FC<{
         borderColor: 'border.default',
       })}
     >
-      <Stage width={width} height={height}>
+      <Stage width={canvasWidth} height={canvasHeight}>
         <Layer>
-          {names.map((name, index) => {
-            const { positions, scale } = calculatePositions({
-              lastName: name.lastName,
-              firstName: name.firstName,
-              fontFamily,
-              fontSize,
-            })
-            const yOffset = index * 30 + 8 // 名前ごとの縦位置調整
+          {groupsWithPositions.map((group) => (
+            <Group key={group.id} y={group.y}>
+              {group.groupName && (
+                <Text
+                  text={group.groupName}
+                  fontSize={14} // TODO: グループ名のフォントサイズを調整
+                  fontFamily={fontFamily}
+                  align="center"
+                  width={canvasWidth}
+                />
+              )}
 
-            return positions.map((pos, i) => (
-              <Text
-                key={`${name.lastName}${name.firstName}-${index}-${i}`}
-                text={pos.char}
-                x={pos.x * scale}
-                y={yOffset}
-                fontSize={fontSize}
-                fontFamily="monospace"
-                scaleX={scale}
-              />
-            ))
-          })}
+              {group.characterNames.map((charName) => (
+                <Text
+                  key={charName.id}
+                  text={charName.name}
+                  // FIXME: 今はfontSizeと一文字の横幅が同じと仮定している、英字のときとかずれる
+                  x={
+                    canvasWidth / 2 -
+                    COLUMN_GAP / 2 -
+                    charName.name.length * characterFontSize
+                  }
+                  y={charName.y}
+                  fontSize={characterFontSize}
+                  fontFamily={fontFamily}
+                />
+              ))}
+
+              {group.names.map((name) => (
+                <Group
+                  key={name.id}
+                  x={canvasWidth / 2 + COLUMN_GAP / 2}
+                  y={name.y}
+                >
+                  {name.positions.map((pos, i) => (
+                    <Text
+                      // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                      key={i}
+                      text={pos.char}
+                      x={pos.x * name.scale}
+                      fontSize={fontSize}
+                      fontFamily={fontFamily}
+                      scaleX={name.scale}
+                    />
+                  ))}
+                </Group>
+              ))}
+            </Group>
+          ))}
         </Layer>
       </Stage>
     </div>
   )
-}
-
-const calculatePositions = ({
-  lastName,
-  firstName,
-  fontFamily,
-  fontSize,
-}: {
-  lastName: string
-  firstName: string
-  fontFamily: string
-  fontSize: number
-}) => {
-  const fullName = lastName + firstName
-
-  const singleCharWidth = (() => {
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-    if (!ctx) {
-      throw new Error('Failed to get canvas context')
-    }
-
-    ctx.font = `${fontSize}px ${fontFamily}`
-    return ctx.measureText('あ').width
-  })()
-  const targetWidth = singleCharWidth * 5
-  const centerX = targetWidth / 2
-
-  const positions: { char: string; x: number }[] = []
-
-  // 6文字以上
-  if (fullName.length > 5) {
-    const scale = targetWidth / (fullName.length * singleCharWidth)
-    fullName.split('').forEach((char, index) => {
-      positions.push({
-        char,
-        x: singleCharWidth * index,
-      })
-    })
-    return { positions, scale }
-  }
-
-  // 5文字
-  if (fullName.length === 5) {
-    fullName.split('').forEach((char, index) => {
-      positions.push({ char, x: singleCharWidth * index })
-    })
-    return { positions, scale: 1 }
-  }
-
-  // 名字2文字・名前1文字
-  if (lastName.length === 2 && firstName.length === 1) {
-    positions.push({ char: lastName[0], x: 0 })
-    positions.push({ char: lastName[1], x: centerX - singleCharWidth })
-    positions.push({ char: firstName, x: targetWidth - singleCharWidth })
-    return { positions, scale: 1 }
-  }
-
-  // 名字1文字・名前2文字
-  if (lastName.length === 1 && firstName.length === 2) {
-    positions.push({ char: lastName, x: 0 })
-    positions.push({ char: firstName[0], x: centerX })
-    positions.push({ char: firstName[1], x: targetWidth - singleCharWidth })
-    return { positions, scale: 1 }
-  }
-
-  // 名字1文字・名前1文字
-  if (lastName.length === 1 && firstName.length === 1) {
-    positions.push({ char: lastName, x: 0 })
-    positions.push({ char: firstName, x: targetWidth - singleCharWidth })
-    return { positions, scale: 1 }
-  }
-
-  // 名字1文字・名前3文字
-  if (lastName.length === 1 && firstName.length === 3) {
-    positions.push({ char: lastName, x: 0 })
-    firstName.split('').forEach((char, index) => {
-      positions.push({ char, x: singleCharWidth * (index + 2) })
-    })
-    return { positions, scale: 1 }
-  }
-
-  // 名字3文字・名前1文字
-  if (lastName.length === 3 && firstName.length === 1) {
-    lastName.split('').forEach((char, index) => {
-      positions.push({ char, x: singleCharWidth * index })
-    })
-    positions.push({ char: firstName, x: singleCharWidth * 4 })
-    return { positions, scale: 1 }
-  }
-
-  // 名字2文字・名前2文字
-  if (lastName.length === 2 && firstName.length === 2) {
-    const spacing = (targetWidth - singleCharWidth * 4) / 3
-    positions.push({ char: lastName[0], x: 0 })
-    positions.push({ char: lastName[1], x: singleCharWidth + spacing })
-    positions.push({ char: firstName[0], x: singleCharWidth * 2 + spacing * 2 })
-    positions.push({ char: firstName[1], x: targetWidth - singleCharWidth })
-    return { positions, scale: 1 }
-  }
-
-  // その他
-  const totalSpace = targetWidth - fullName.length * singleCharWidth
-  const spacing = totalSpace / (fullName.length + 1)
-  fullName.split('').forEach((char, index) => {
-    positions.push({
-      char,
-      x: spacing * (index + 1) + singleCharWidth * index,
-    })
-  })
-  return { positions, scale: 1 }
 }
 
 export default NameCanvas

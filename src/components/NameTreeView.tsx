@@ -1,11 +1,12 @@
 'use client'
 
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { Plus, X } from 'lucide-react'
 import { type ComponentProps, type FC, useCallback } from 'react'
 import { css } from 'styled-system/css'
 import { hstack, stack } from 'styled-system/patterns'
 import {
+  addNameAtom,
   nameFamily,
   nameGroupFamily,
   nameGroupIdsAtom,
@@ -19,8 +20,11 @@ const NameTreeView: FC = () => {
   const [selectedItem, setSelectedItem] = useAtom(selectedItemAtom)
 
   const handleGroupAdd = useCallback(() => {
-    setNameGroupIds([...nameGroupIds, crypto.randomUUID()])
-  }, [nameGroupIds, setNameGroupIds])
+    // TODO: ここらへんもatomに寄せる、更新系atomは別ファイルに書いたほうが見通しいいかも
+    const newId = crypto.randomUUID()
+    setNameGroupIds([...nameGroupIds, newId])
+    setSelectedItem({ type: 'group', id: newId })
+  }, [nameGroupIds, setNameGroupIds, setSelectedItem])
 
   const handleGroupDelete = useCallback(
     (groupId: string) => {
@@ -60,14 +64,10 @@ const GroupTreeItem: FC<{
   const [group, setGroup] = useAtom(nameGroupFamily(groupId))
   const [selectedItem, setSelectedItem] = useAtom(selectedItemAtom)
 
+  const addName = useSetAtom(addNameAtom)
   const handleNameAdd = useCallback(() => {
-    const newId = crypto.randomUUID()
-    setGroup((prev) => ({
-      ...prev,
-      nameIds: [...prev.nameIds, newId],
-    }))
-    setSelectedItem({ type: 'name', id: newId })
-  }, [setGroup, setSelectedItem])
+    addName(groupId)
+  }, [addName, groupId])
 
   const handleGroupDelete = useCallback(
     (e: React.MouseEvent) => {
@@ -93,6 +93,8 @@ const GroupTreeItem: FC<{
     [setGroup, setSelectedItem, selectedItem],
   )
 
+  const isGroupNameEmpty = group.groupName === ''
+
   return (
     <div className={stack({ gap: '1' })}>
       <div className={css({ display: 'flex', alignItems: 'center', gap: '2' })}>
@@ -105,7 +107,12 @@ const GroupTreeItem: FC<{
           <div
             className={hstack({ justifyContent: 'space-between', w: 'full' })}
           >
-            グループ {group.nameIds.length}件
+            {isGroupNameEmpty ? (
+              <span className={css({ color: 'fg.subtle' })}>空のグループ</span>
+            ) : (
+              <span>{group.groupName}</span>
+            )}
+
             <IconButton
               variant="ghost"
               size="sm"
