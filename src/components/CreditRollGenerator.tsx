@@ -22,11 +22,12 @@ const CreditRollGenerator: FC = () => {
           borderRightWidth: 1,
           borderColor: 'border.default',
           px: 2,
+          overflowY: 'auto',
         })}
       >
         <NameTreeView />
       </div>
-      <div className={css({ px: 2 })}>
+      <div className={css({ px: 2, overflowY: 'auto' })}>
         <NameEditor />
       </div>
       <NameCanvas />
