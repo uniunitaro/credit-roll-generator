@@ -21,3 +21,12 @@ export const allNamesAtom = atom((get) => {
 
   return names
 })
+
+type SelectedItem =
+  | {
+      type: 'group' | 'name'
+      id: string
+    }
+  | undefined
+
+export const selectedItemAtom = atom<SelectedItem>()
