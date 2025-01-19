@@ -1,15 +1,32 @@
 'use client'
 
+import { useSetAtom } from 'jotai'
 import dynamic from 'next/dynamic'
-import type { FC } from 'react'
+import { type FC, useEffect } from 'react'
 import { css } from 'styled-system/css'
 import { grid } from 'styled-system/patterns'
+import { loadStateAtom, saveStateAtom } from '~/atoms/persistence'
 import NameEditor from './NameEditor'
 import NameTreeView from './NameTreeView'
 
 const NameCanvas = dynamic(() => import('./NameCanvas'), { ssr: false })
 
 const CreditRollGenerator: FC = () => {
+  const loadState = useSetAtom(loadStateAtom)
+  const saveState = useSetAtom(saveStateAtom)
+
+  // 初回マウント時に状態を復元
+  useEffect(() => {
+    loadState()
+  }, [loadState])
+
+  // 状態変更を監視して保存
+  useEffect(() => {
+    // FIXME: 本当は更新を監視したいが今は2秒ごとに保存
+    const saveInterval = setInterval(saveState, 2000)
+    return () => clearInterval(saveInterval)
+  }, [saveState])
+
   return (
     <div
       className={grid({
