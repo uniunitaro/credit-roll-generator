@@ -1,5 +1,6 @@
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
+import { DEFAULT_COLUMNS } from '~/constants/constants'
 import type { GroupType, GroupWithName, Name, NameGroup } from '~/types/name'
 
 export const nameGroupIdsAtom = atom<string[]>([crypto.randomUUID()])
@@ -9,6 +10,7 @@ export const nameGroupFamily = atomFamily((id: string) =>
     id,
     type: 'normal',
     groupName: '',
+    columns: DEFAULT_COLUMNS,
     nameIds: [crypto.randomUUID()],
   }),
 )
@@ -42,8 +44,7 @@ export const allGroupsAtom = atom<GroupWithName[]>((get) => {
     const group = get(nameGroupFamily(id))
     const names = group.nameIds.map((nameId) => get(nameFamily(nameId)))
     return {
-      id: group.id,
-      groupName: group.groupName,
+      ...group,
       names,
     }
   })
@@ -57,7 +58,11 @@ export const changeGroupTypeAtom = atom(
     const group = get(nameGroupFamily(groupId))
     const names = group.nameIds.map((nameId) => get(nameFamily(nameId)))
 
-    set(nameGroupFamily(groupId), { ...group, type: newType })
+    const newGroup: NameGroup =
+      newType === 'normal'
+        ? { ...group, type: 'normal', columns: DEFAULT_COLUMNS }
+        : { ...group, type: 'character' }
+    set(nameGroupFamily(groupId), newGroup)
 
     for (const name of names) {
       if (newType === 'character') {

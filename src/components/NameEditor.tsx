@@ -14,6 +14,7 @@ import {
 } from '~/atoms/names'
 import type { GroupType } from '~/types/name'
 import { Input } from './ui/input'
+import { NumberInput } from './ui/number-input'
 import { Select } from './ui/select'
 
 const NameEditor: FC = () => {
@@ -89,6 +90,7 @@ const GroupEditForm: FC<{ groupId: string }> = ({ groupId }) => {
           placeholder="グループ名"
         />
         <div>
+          {/* TODO: Select使いやすくコンポーネント化する */}
           <Select.Root
             variant="outline"
             positioning={{ sameWidth: true }}
@@ -124,6 +126,16 @@ const GroupEditForm: FC<{ groupId: string }> = ({ groupId }) => {
             </Select.Positioner>
           </Select.Root>
         </div>
+        {group.type === 'normal' && (
+          <NumberInput
+            value={group.columns.toString()}
+            onValueChange={(value) => {
+              setGroup({ ...group, columns: value.valueAsNumber })
+            }}
+          >
+            カラム数
+          </NumberInput>
+        )}
       </div>
     </div>
   )

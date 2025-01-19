@@ -1,31 +1,39 @@
 export type GroupType = 'normal' | 'character'
 
-export type NameGroup = {
+type BaseGroup = {
   id: string
-  type: GroupType
   groupName: string
   nameIds: string[]
 }
 
-export type NormalName = {
-  kind: 'normal'
+export type NormalGroup = BaseGroup & {
+  type: 'normal'
+  columns: number
+}
+
+export type CharacterGroup = BaseGroup & {
+  type: 'character'
+}
+
+export type NameGroup = NormalGroup | CharacterGroup
+
+type BaseName = {
   id: string
   firstName: string
   lastName: string
 }
 
-export type CharacterName = {
+export type NormalName = BaseName & {
+  kind: 'normal'
+}
+
+export type CharacterName = BaseName & {
   kind: 'character'
-  id: string
-  firstName: string
-  lastName: string
   character: string
 }
 
 export type Name = NormalName | CharacterName
 
-export type GroupWithName = {
-  id: string
-  groupName: string
+export type GroupWithName = StrictOmit<NameGroup, 'nameIds'> & {
   names: Name[]
 }
