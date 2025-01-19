@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 }
 
 const RootLayout: FC<Readonly<{ children: ReactNode }>> = ({ children }) => (
-  <html lang="ja">
+  <html lang="ja" className="dark">
     <body>{children}</body>
   </html>
 )

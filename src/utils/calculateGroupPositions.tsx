@@ -1,5 +1,4 @@
 'use client'
-import { DEFAULT_COLUMN_GAP, DEFAULT_GROUP_GAP } from '~/constants/constants'
 import type { GroupWithName } from '~/types/name'
 import { calculatePositionsFromSplitName } from '~/utils/calculatePositions'
 import { getCharacterDimensions } from '~/utils/getCharacterDimensions'
@@ -36,11 +35,15 @@ export const calculateGroupPositions = ({
   fontFamily,
   fontSize,
   characterFontSize,
+  columnGap,
+  groupGap,
 }: {
   groups: GroupWithName[]
   fontFamily: string
   fontSize: number
   characterFontSize: number
+  columnGap: number
+  groupGap: number
 }): GroupWithPosition[] => {
   const { height: normalHeight } = getCharacterDimensions({
     fontFamily,
@@ -77,10 +80,10 @@ export const calculateGroupPositions = ({
             fontSize,
           })
 
-          const nameY = group.groupName ? DEFAULT_GROUP_GAP : 0 // グループ名があればギャップ分下にずらす
+          const nameY = group.groupName ? groupGap : 0 // グループ名があればギャップ分下にずらす
           return {
             id: name.id,
-            y: nameY + index * DEFAULT_GROUP_GAP,
+            y: nameY + index * groupGap,
             positions,
             scale,
             width,
@@ -89,14 +92,11 @@ export const calculateGroupPositions = ({
     })
 
     const characterNames = group.names.map((name, index) => {
-      const nameY = group.groupName ? DEFAULT_GROUP_GAP : 0 // グループ名があればギャップ分下にずらす
+      const nameY = group.groupName ? groupGap : 0 // グループ名があればギャップ分下にずらす
       return {
         id: name.id,
         // 声優名とフォントサイズが異なるためキャラクター名が右カラムの声優名の縦中央に表示されるように調整
-        y:
-          nameY +
-          index * DEFAULT_GROUP_GAP +
-          (normalHeight - characterHeight) / 2,
+        y: nameY + index * groupGap + (normalHeight - characterHeight) / 2,
         name: name.kind === 'character' ? name.character : '',
       }
     })
@@ -105,12 +105,11 @@ export const calculateGroupPositions = ({
       Math.max(
         ...nameColumns.map((column) => Math.max(...column.map((n) => n.y))),
       ) +
-      DEFAULT_GROUP_GAP +
+      groupGap +
       (group.groupName ? 8 : 0)
-    currentY += groupHeight + DEFAULT_GROUP_GAP // 次のグループまでの間隔
+    currentY += groupHeight + groupGap // 次のグループまでの間隔
 
-    const groupWidth =
-      columnWidth * columnCount + (columnCount - 1) * DEFAULT_COLUMN_GAP
+    const groupWidth = columnWidth * columnCount + (columnCount - 1) * columnGap
 
     return {
       type: group.type,

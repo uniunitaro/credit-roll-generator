@@ -1,6 +1,8 @@
 import { atom } from 'jotai'
 import type { Name, NameGroup } from '~/types/name'
+import type { Setting } from '~/types/setting'
 import { nameFamily, nameGroupFamily, nameGroupIdsAtom } from './names'
+import { settingAtom } from './setting'
 
 const STORAGE_KEY = 'credit-roll-state'
 
@@ -8,6 +10,7 @@ type StorageState = {
   groupIds: string[]
   groups: NameGroup[]
   names: Name[]
+  setting: Setting
 }
 
 // 状態を保存するatom
@@ -17,11 +20,13 @@ export const saveStateAtom = atom(null, (get) => {
   const names = groups.flatMap((group) =>
     group.nameIds.map((nameId) => get(nameFamily(nameId))),
   )
+  const setting = get(settingAtom)
 
   const state: StorageState = {
     groupIds,
     groups,
     names,
+    setting,
   }
 
   try {
@@ -51,6 +56,9 @@ export const loadStateAtom = atom(null, (get, set) => {
     for (const name of state.names) {
       set(nameFamily(name.id), name)
     }
+
+    // 設定の復元
+    set(settingAtom, state.setting)
   } catch (error) {
     console.error('Failed to load state:', error)
   }

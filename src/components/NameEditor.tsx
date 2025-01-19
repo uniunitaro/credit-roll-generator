@@ -2,7 +2,6 @@
 
 import { createListCollection } from '@ark-ui/react'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react'
 import type { FC } from 'react'
 import { css } from 'styled-system/css'
 import { hstack, stack } from 'styled-system/patterns'
@@ -12,10 +11,14 @@ import {
   nameGroupFamily,
   selectedItemAtom,
 } from '~/atoms/names'
+import { settingAtom } from '~/atoms/setting'
+import { useAvailableFonts } from '~/hooks/useAvailableFonts'
 import type { GroupType } from '~/types/name'
+import { SimpleColorPicker } from './SimpleColorPicker'
+import { SimpleCombobox } from './SimpleCombobox'
+import { SimpleSelect } from './SimpleSelect'
 import { Input } from './ui/input'
 import { NumberInput } from './ui/number-input'
-import { Select } from './ui/select'
 
 const NameEditor: FC = () => {
   const selectedItem = useAtomValue(selectedItemAtom)
@@ -30,9 +33,11 @@ const NameEditor: FC = () => {
 
   return selectedItem.type === 'name' ? (
     <NameEditForm nameId={selectedItem.id} />
-  ) : (
+  ) : selectedItem.type === 'group' ? (
     <GroupEditForm groupId={selectedItem.id} />
-  )
+  ) : selectedItem.type === 'setting' ? (
+    <SettingEditForm />
+  ) : null
 }
 
 const NameEditForm: FC<{ nameId: string }> = ({ nameId }) => {
@@ -89,43 +94,15 @@ const GroupEditForm: FC<{ groupId: string }> = ({ groupId }) => {
           }}
           placeholder="グループ名"
         />
-        <div>
-          {/* TODO: Select使いやすくコンポーネント化する */}
-          <Select.Root
-            variant="outline"
-            positioning={{ sameWidth: true }}
-            collection={collection}
-            value={[group.type]}
-            onValueChange={({ value }) => {
-              changeGroupType(
-                groupId,
-                (value.at(0) as GroupType | undefined) ?? 'normal',
-              )
-            }}
-          >
-            <Select.Label>タイプ</Select.Label>
-            <Select.Control>
-              <Select.Trigger>
-                <Select.ValueText placeholder="タイプを選択" />
-                <ChevronsUpDownIcon />
-              </Select.Trigger>
-            </Select.Control>
-            <Select.Positioner>
-              <Select.Content>
-                <Select.ItemGroup>
-                  {collection.items.map((item) => (
-                    <Select.Item key={item.value} item={item}>
-                      <Select.ItemText>{item.label}</Select.ItemText>
-                      <Select.ItemIndicator>
-                        <CheckIcon />
-                      </Select.ItemIndicator>
-                    </Select.Item>
-                  ))}
-                </Select.ItemGroup>
-              </Select.Content>
-            </Select.Positioner>
-          </Select.Root>
-        </div>
+        <SimpleSelect
+          value={group.type}
+          onChange={(value) => {
+            changeGroupType(groupId, value)
+          }}
+          collection={collection}
+          label="タイプ"
+          placeholder="タイプを選択"
+        />
         {group.type === 'normal' && (
           <NumberInput
             value={group.columns.toString()}
@@ -136,6 +113,90 @@ const GroupEditForm: FC<{ groupId: string }> = ({ groupId }) => {
             カラム数
           </NumberInput>
         )}
+      </div>
+    </div>
+  )
+}
+
+const SettingEditForm: FC = () => {
+  const [setting, setSetting] = useAtom(settingAtom)
+  const fonts = useAvailableFonts()
+
+  return (
+    <div className={stack({ gap: '4' })}>
+      <h2 className={css({ fontSize: 'md', fontWeight: 'bold' })}>全体設定</h2>
+      <div className={stack({ gap: '4' })}>
+        <SimpleCombobox
+          value={setting.fontFamily}
+          onChange={(value) => {
+            setSetting({ ...setting, fontFamily: value })
+          }}
+          collection={createListCollection({
+            items: fonts.map((font) => ({
+              label: font.fullName,
+              value: font.family,
+            })),
+          })}
+          label="フォント"
+          placeholder="フォントを選択"
+        />
+
+        <SimpleColorPicker
+          color={setting.fontColor}
+          onColorChange={(color) => {
+            setSetting({ ...setting, fontColor: color })
+          }}
+          label="フォント色"
+        />
+
+        <SimpleColorPicker
+          color={setting.canvasBgColor}
+          onColorChange={(color) => {
+            setSetting({ ...setting, canvasBgColor: color })
+          }}
+          label="背景色"
+        />
+
+        <NumberInput
+          value={setting.fontSize.toString()}
+          onValueChange={(value) => {
+            setSetting({ ...setting, fontSize: value.valueAsNumber })
+          }}
+        >
+          フォントサイズ
+        </NumberInput>
+        <NumberInput
+          value={setting.groupNameFontSize.toString()}
+          onValueChange={(value) => {
+            setSetting({ ...setting, groupNameFontSize: value.valueAsNumber })
+          }}
+        >
+          グループ名フォントサイズ
+        </NumberInput>
+        <NumberInput
+          value={setting.characterFontSize.toString()}
+          onValueChange={(value) => {
+            setSetting({ ...setting, characterFontSize: value.valueAsNumber })
+          }}
+        >
+          キャラクター名フォントサイズ
+        </NumberInput>
+        <NumberInput
+          value={setting.columnGap.toString()}
+          onValueChange={(value) => {
+            setSetting({ ...setting, columnGap: value.valueAsNumber })
+          }}
+        >
+          カラム間隔
+        </NumberInput>
+        <NumberInput
+          value={setting.groupGap.toString()}
+          onValueChange={(value) => {
+            setSetting({ ...setting, groupGap: value.valueAsNumber })
+          }}
+        >
+          グループ間隔
+        </NumberInput>
       </div>
     </div>
   )

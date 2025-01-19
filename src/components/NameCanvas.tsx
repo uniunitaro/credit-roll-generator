@@ -6,20 +6,29 @@ import { Group, Layer, Stage, Text } from 'react-konva'
 import { useMeasure } from 'react-use'
 import { css } from 'styled-system/css'
 import { allGroupsAtom } from '~/atoms/names'
-import { DEFAULT_COLUMN_GAP } from '~/constants/constants'
+import { settingAtom } from '~/atoms/setting'
 import { calculateGroupPositions } from '../utils/calculateGroupPositions'
 
-const NameCanvas: FC<{
-  fontFamily?: string
-  fontSize?: number
-  characterFontSize?: number
-}> = ({ fontFamily = 'monospace', fontSize = 16, characterFontSize = 12 }) => {
+const NameCanvas: FC = () => {
+  const {
+    fontFamily,
+    fontSize,
+    characterFontSize,
+    groupNameFontSize,
+    columnGap,
+    groupGap,
+    fontColor,
+    canvasBgColor,
+  } = useAtomValue(settingAtom)
+
   const groups = useAtomValue(allGroupsAtom)
   const groupsWithPositions = calculateGroupPositions({
     groups,
     fontFamily,
     fontSize,
     characterFontSize,
+    columnGap,
+    groupGap,
   })
 
   const [ref, { width: containerWidth }] = useMeasure<HTMLDivElement>()
@@ -34,6 +43,7 @@ const NameCanvas: FC<{
         borderStyle: 'solid',
         borderColor: 'border.default',
       })}
+      style={{ backgroundColor: canvasBgColor }}
     >
       <Stage width={canvasWidth} height={canvasHeight}>
         <Layer>
@@ -42,10 +52,11 @@ const NameCanvas: FC<{
               {group.groupName && (
                 <Text
                   text={group.groupName}
-                  fontSize={14} // TODO: グループ名のフォントサイズを調整
+                  fontSize={groupNameFontSize}
                   fontFamily={fontFamily}
                   align="center"
                   width={canvasWidth}
+                  fill={fontColor}
                 />
               )}
 
@@ -58,12 +69,13 @@ const NameCanvas: FC<{
                       // FIXME: 今はfontSizeと一文字の横幅が同じと仮定している、英字のときとかずれる
                       x={
                         canvasWidth / 2 -
-                        DEFAULT_COLUMN_GAP / 2 -
+                        columnGap / 2 -
                         charName.name.length * characterFontSize
                       }
                       y={charName.y}
                       fontSize={characterFontSize}
                       fontFamily={fontFamily}
+                      fill={fontColor}
                     />
                   ))}
 
@@ -71,7 +83,7 @@ const NameCanvas: FC<{
                   {group.nameColumns.at(0)?.map((name) => (
                     <Group
                       key={name.id}
-                      x={canvasWidth / 2 + DEFAULT_COLUMN_GAP / 2}
+                      x={canvasWidth / 2 + columnGap / 2}
                       y={name.y}
                     >
                       {name.positions.map((pos, i) => (
@@ -83,6 +95,7 @@ const NameCanvas: FC<{
                           fontSize={fontSize}
                           fontFamily={fontFamily}
                           scaleX={name.scale}
+                          fill={fontColor}
                         />
                       ))}
                     </Group>
@@ -95,7 +108,7 @@ const NameCanvas: FC<{
                     <Group
                       // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                       key={columnIndex}
-                      x={columnIndex * (group.columnWidth + DEFAULT_COLUMN_GAP)}
+                      x={columnIndex * (group.columnWidth + columnGap)}
                       y={0}
                     >
                       {column.map((name) => (
@@ -109,6 +122,7 @@ const NameCanvas: FC<{
                               fontSize={fontSize}
                               fontFamily={fontFamily}
                               scaleX={name.scale}
+                              fill={fontColor}
                             />
                           ))}
                         </Group>

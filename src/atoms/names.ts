@@ -86,6 +86,7 @@ type SelectedItem =
       type: 'group' | 'name'
       id: string
     }
+  | { type: 'setting' }
   | undefined
 
 export const selectedItemAtom = atom<SelectedItem>()

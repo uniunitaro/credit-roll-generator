@@ -1,10 +1,10 @@
 'use client'
 
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { Plus, X } from 'lucide-react'
+import { Plus, Settings, X } from 'lucide-react'
 import { type ComponentProps, type FC, useCallback } from 'react'
 import { css } from 'styled-system/css'
-import { hstack, stack } from 'styled-system/patterns'
+import { grid, hstack, stack } from 'styled-system/patterns'
 import {
   addNameAtom,
   nameFamily,
@@ -36,23 +36,66 @@ const NameTreeView: FC = () => {
     [nameGroupIds, setNameGroupIds, selectedItem, setSelectedItem],
   )
 
+  const handleSettingClick = useCallback(() => {
+    setSelectedItem({ type: 'setting' })
+  }, [setSelectedItem])
+  const isSettingSelected = selectedItem?.type === 'setting'
+
   return (
-    <div className={stack({ gap: '4' })}>
-      <div className={stack({ gap: '2' })}>
-        {nameGroupIds.map((groupId) => (
-          <GroupTreeItem
-            key={groupId}
-            groupId={groupId}
-            onGroupDelete={handleGroupDelete}
-          />
-        ))}
-      </div>
-      <Button variant="ghost" onClick={handleGroupAdd}>
-        <div className={hstack({ gap: '2' })}>
-          <Plus />
-          グループを追加
+    <div
+      className={grid({
+        gridTemplateRows: 'minmax(0, 1fr) auto',
+        gap: '0',
+        h: 'full',
+      })}
+    >
+      <div
+        className={stack({
+          gap: '4',
+          pb: '2',
+          borderBottomWidth: 1,
+          borderColor: 'border.default',
+        })}
+      >
+        <div className={stack({ overflowY: 'auto' })}>
+          <div className={stack({ gap: '2' })}>
+            {nameGroupIds.map((groupId) => (
+              <GroupTreeItem
+                key={groupId}
+                groupId={groupId}
+                onGroupDelete={handleGroupDelete}
+              />
+            ))}
+          </div>
+          <Button
+            variant="ghost"
+            className={css({ justifyContent: 'start' })}
+            onClick={handleGroupAdd}
+          >
+            <div className={hstack({ gap: '2' })}>
+              <Plus />
+              グループを追加
+            </div>
+          </Button>
         </div>
-      </Button>
+      </div>
+
+      <div className={stack({ pt: '2' })}>
+        <Button
+          variant="ghost"
+          className={css({
+            justifyContent: 'start',
+            bg: isSettingSelected ? 'bg.muted' : 'transparent',
+            _hover: { bg: 'gray.a3' },
+          })}
+          onClick={handleSettingClick}
+        >
+          <div className={hstack({ gap: '2' })}>
+            <Settings />
+            全体設定
+          </div>
+        </Button>
+      </div>
     </div>
   )
 }
@@ -132,7 +175,12 @@ const GroupTreeItem: FC<{
             onNameDelete={handleNameDelete}
           />
         ))}
-        <Button variant="ghost" size="sm" onClick={handleNameAdd}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className={css({ justifyContent: 'start' })}
+          onClick={handleNameAdd}
+        >
           <div className={hstack({ gap: '2' })}>
             <Plus />
             名前を追加
@@ -201,9 +249,8 @@ const TreeItemButton: FC<
         className={css({
           justifyContent: 'start',
           p: '2',
-          borderRadius: 'xl',
           w: 'full',
-          _hover: { bg: 'bg.muted' },
+          _hover: { bg: 'gray.a3' },
           bg: isSelected ? 'bg.muted' : 'transparent',
           fontSize: 'sm',
           fontWeight: 'normal',
