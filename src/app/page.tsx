@@ -6,23 +6,17 @@ import type { FC } from 'react'
 import { useRef } from 'react'
 import { container, grid, hstack } from 'styled-system/patterns'
 import CreditRollGenerator from '~/components/CreditRollGenerator'
+import type { NameCanvasRef } from '~/components/NameCanvas'
 import { Button } from '~/components/ui/button'
 import { css } from '../../styled-system/css'
 
 const Home: FC = () => {
   const stageRef = useRef<Konva.Stage>(null)
+  const nameCanvasRef = useRef<NameCanvasRef>(null)
 
   // TODO: ダウンロードはあとで考え直す、scaleで1920にするより1920で描画しなおしてscale: 1でだすほうがよさそう？
   const handleDownload = () => {
-    if (!stageRef.current) return
-
-    const dataURL = stageRef.current.toDataURL()
-    const link = document.createElement('a')
-    link.download = 'credit-roll.png'
-    link.href = dataURL
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    nameCanvasRef.current?.exportToImage()
   }
 
   return (
@@ -43,7 +37,10 @@ const Home: FC = () => {
             画像出力
           </Button>
         </div>
-        <CreditRollGenerator stageRef={stageRef} />
+        <CreditRollGenerator
+          stageRef={stageRef}
+          nameCanvasRef={nameCanvasRef}
+        />
       </div>
     </div>
   )

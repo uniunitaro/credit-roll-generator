@@ -30,6 +30,12 @@ type CharacterGroupWithPosition = BaseGroupWithPosition & {
   }[]
 }
 type GroupWithPosition = NormalGroupWithPosition | CharacterGroupWithPosition
+
+export type CalculateGroupPositionsResult = {
+  groups: GroupWithPosition[]
+  totalHeight: number
+}
+
 export const calculateGroupPositions = ({
   groups,
   fontFamily,
@@ -50,7 +56,7 @@ export const calculateGroupPositions = ({
   nameGap: number
   groupNameGap: number
   groupNameFontSize: number
-}): GroupWithPosition[] => {
+}): CalculateGroupPositionsResult => {
   const { height: normalHeight } = getCharacterDimensions({
     fontFamily,
     fontSize,
@@ -73,67 +79,74 @@ export const calculateGroupPositions = ({
   })
 
   // FIXME: マジックナンバー！！
-  let currentY = 8
-  return groups.map((group) => {
-    const groupStartY = currentY
+  const PADDING_Y = 8
+  let currentY = PADDING_Y
+  return {
+    groups: groups.map((group) => {
+      const groupStartY = currentY
 
-    const columnCount = group.type === 'normal' ? group.columns : 1
+      const columnCount = group.type === 'normal' ? group.columns : 1
 
-    // a, b, cという名前がある場合、[[a, c], [b]]という構造にする
-    const nameColumns = [...Array(columnCount)].map((_, columnIndex) => {
-      return group.names
-        .filter((_, i) => i % columnCount === columnIndex)
-        .map((name, index) => {
-          const { positions, scale, width } = calculatePositionsFromSplitName({
-            lastName: name.lastName,
-            firstName: name.firstName,
-            fontFamily,
-            fontSize,
+      // a, b, cという名前がある場合、[[a, c], [b]]という構造にする
+      const nameColumns = [...Array(columnCount)].map((_, columnIndex) => {
+        return group.names
+          .filter((_, i) => i % columnCount === columnIndex)
+          .map((name, index) => {
+            const { positions, scale, width } = calculatePositionsFromSplitName(
+              {
+                lastName: name.lastName,
+                firstName: name.firstName,
+                fontFamily,
+                fontSize,
+              },
+            )
+
+            const nameY = group.groupName ? groupNameHeight + groupNameGap : 0 // グループ名があればギャップ分下にずらす
+            return {
+              id: name.id,
+              y: nameY + index * (normalHeight + nameGap),
+              positions,
+              scale,
+              width,
+            }
           })
+      })
 
-          const nameY = group.groupName ? groupNameHeight + groupNameGap : 0 // グループ名があればギャップ分下にずらす
-          return {
-            id: name.id,
-            y: nameY + index * (normalHeight + nameGap),
-            positions,
-            scale,
-            width,
-          }
-        })
-    })
+      const characterNames = group.names.map((name, index) => {
+        const nameY = group.groupName ? groupNameHeight + groupNameGap : 0 // グループ名があればギャップ分下にずらす
+        return {
+          id: name.id,
+          // 声優名とフォントサイズが異なるためキャラクター名が右カラムの声優名の縦中央に表示されるように調整
+          y:
+            nameY +
+            index * (normalHeight + nameGap) +
+            (normalHeight - characterHeight) / 2,
+          name: name.kind === 'character' ? name.character : '',
+        }
+      })
 
-    const characterNames = group.names.map((name, index) => {
-      const nameY = group.groupName ? groupNameHeight + groupNameGap : 0 // グループ名があればギャップ分下にずらす
+      const groupHeight =
+        (Math.max(...nameColumns.map((column) => column.length)) - 1) *
+          (normalHeight + nameGap) +
+        normalHeight +
+        (group.groupName ? groupNameHeight + groupNameGap : 0)
+      currentY += groupHeight + groupGap // 次のグループまでの間隔
+
+      const groupWidth =
+        columnWidth * columnCount + (columnCount - 1) * columnGap
+
       return {
-        id: name.id,
-        // 声優名とフォントサイズが異なるためキャラクター名が右カラムの声優名の縦中央に表示されるように調整
-        y:
-          nameY +
-          index * (normalHeight + nameGap) +
-          (normalHeight - characterHeight) / 2,
-        name: name.kind === 'character' ? name.character : '',
+        type: group.type,
+        id: group.id,
+        y: groupStartY,
+        groupName: group.groupName,
+        nameColumns,
+        characterNames,
+        columnCount,
+        columnWidth,
+        width: groupWidth,
       }
-    })
-
-    const groupHeight =
-      (Math.max(...nameColumns.map((column) => column.length)) - 1) *
-        (normalHeight + nameGap) +
-      normalHeight +
-      (group.groupName ? groupNameHeight + groupNameGap : 0)
-    currentY += groupHeight + groupGap // 次のグループまでの間隔
-
-    const groupWidth = columnWidth * columnCount + (columnCount - 1) * columnGap
-
-    return {
-      type: group.type,
-      id: group.id,
-      y: groupStartY,
-      groupName: group.groupName,
-      nameColumns,
-      characterNames,
-      columnCount,
-      columnWidth,
-      width: groupWidth,
-    }
-  })
+    }),
+    totalHeight: currentY - groupGap + PADDING_Y, // 最後のグループ後のギャップを除く
+  }
 }

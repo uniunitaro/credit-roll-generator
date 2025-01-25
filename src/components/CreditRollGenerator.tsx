@@ -3,18 +3,23 @@
 import { useSetAtom } from 'jotai'
 import type Konva from 'konva'
 import dynamic from 'next/dynamic'
-import { type FC, type RefObject, useEffect } from 'react'
+import type { FC, RefObject } from 'react'
+import { useEffect } from 'react'
 import { css } from 'styled-system/css'
 import { grid } from 'styled-system/patterns'
 import { loadStateAtom, saveStateAtom } from '~/atoms/persistence'
+import type { NameCanvasRef } from './NameCanvas'
 import NameEditor from './NameEditor'
 import NameTreeView from './NameTreeView'
 
 const NameCanvas = dynamic(() => import('./NameCanvas'), { ssr: false })
 
-const CreditRollGenerator: FC<{ stageRef: RefObject<Konva.Stage | null> }> = ({
-  stageRef,
-}) => {
+type Props = {
+  stageRef: RefObject<Konva.Stage | null>
+  nameCanvasRef: RefObject<NameCanvasRef | null>
+}
+
+const CreditRollGenerator: FC<Props> = ({ stageRef, nameCanvasRef }) => {
   const loadState = useSetAtom(loadStateAtom)
   const saveState = useSetAtom(saveStateAtom)
 
@@ -50,7 +55,7 @@ const CreditRollGenerator: FC<{ stageRef: RefObject<Konva.Stage | null> }> = ({
       <div className={css({ px: 2, overflowY: 'auto' })}>
         <NameEditor />
       </div>
-      <NameCanvas stageRef={stageRef} />
+      <NameCanvas stageRef={stageRef} ref={nameCanvasRef} />
     </div>
   )
 }

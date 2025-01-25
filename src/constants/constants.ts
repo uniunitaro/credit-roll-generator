@@ -6,7 +6,7 @@ export const DEFAULT_GROUP_GAP = 140
 
 export const DEFAULT_NAME_GAP = 32
 
-export const DEFAULT_GROUP_NAME_GAP = 28
+export const DEFAULT_GROUP_NAME_GAP = 16
 
 export const DEFAULT_FONT_FAMILY = 'sans-serif'
 
