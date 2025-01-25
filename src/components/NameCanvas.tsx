@@ -63,11 +63,13 @@ const NameCanvas: FC<{
 
       // 現在の状態を保存
       const currentWidth = stageRef.current.width()
+      const currentHeight = stageRef.current.height()
       const currentScale = stageRef.current.scale()
       const currentPosition = stageRef.current.position()
 
       // 出力用の設定に変更
       stageRef.current.width(1920)
+      stageRef.current.height(totalHeight)
       stageRef.current.scale({ x: 1, y: 1 })
       stageRef.current.position({ x: 0, y: 0 })
 
@@ -75,6 +77,7 @@ const NameCanvas: FC<{
 
       // 元の状態に戻す
       stageRef.current.width(currentWidth)
+      stageRef.current.height(currentHeight)
       stageRef.current.scale(currentScale)
       stageRef.current.position(currentPosition)
 
