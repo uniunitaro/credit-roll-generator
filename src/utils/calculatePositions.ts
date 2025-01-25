@@ -1,3 +1,5 @@
+import { getCharacterDimensions } from './getCharacterDimensions'
+
 export const calculatePositionsFromSplitName = ({
   lastName,
   firstName,
@@ -15,16 +17,12 @@ export const calculatePositionsFromSplitName = ({
 } => {
   const fullName = lastName + firstName
 
-  const singleCharWidth = (() => {
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-    if (!ctx) {
-      throw new Error('Failed to get canvas context')
-    }
+  const { width: singleCharWidth } = getCharacterDimensions({
+    fontFamily,
+    fontSize,
+    text: 'あ',
+  })
 
-    ctx.font = `${fontSize}px ${fontFamily}`
-    return ctx.measureText('あ').width
-  })()
   const targetWidth = singleCharWidth * 5
 
   const positions: { char: string; x: number }[] = []
@@ -109,6 +107,83 @@ export const calculatePositionsFromSplitName = ({
     positions.push({
       char,
       x: spacing * (index + 1) + singleCharWidth * index,
+    })
+  })
+  return { positions, scale: 1, width: targetWidth }
+}
+
+export const calculatePositionsFromSingleName = ({
+  name,
+  fontFamily,
+  fontSize,
+}: {
+  name: string
+  fontFamily: string
+  fontSize: number
+}): {
+  positions: { char: string; x: number }[]
+  scale: number
+  width: number
+} => {
+  const { width: singleCharWidth } = getCharacterDimensions({
+    fontFamily,
+    fontSize,
+    text: 'あ',
+  })
+
+  const targetWidth = singleCharWidth * 5
+  const positions: { char: string; x: number }[] = []
+
+  // 6文字以上の場合は縮小する
+  if (name.length > 5) {
+    const scale = targetWidth / (name.length * singleCharWidth)
+    name.split('').forEach((char, index) => {
+      positions.push({
+        char,
+        x: singleCharWidth * index,
+      })
+    })
+    return { positions, scale, width: targetWidth }
+  }
+
+  // 1文字の場合は中央配置
+  if (name.length === 1) {
+    positions.push({
+      char: name,
+      x: (targetWidth - singleCharWidth) / 2,
+    })
+    return { positions, scale: 1, width: targetWidth }
+  }
+
+  // 2-4文字の場合は端に寄せて残りを均等配置
+  if (name.length >= 2 && name.length <= 4) {
+    // 最初の文字は左端
+    positions.push({ char: name[0], x: 0 })
+
+    if (name.length === 2) {
+      // 2文字の場合は両端
+      positions.push({ char: name[1], x: targetWidth - singleCharWidth })
+    } else if (name.length === 3) {
+      // 3文字の場合は左端、中央、右端
+      positions.push({ char: name[1], x: (targetWidth - singleCharWidth) / 2 })
+      positions.push({ char: name[2], x: targetWidth - singleCharWidth })
+    } else {
+      // 4文字の場合は名字2・名前2と同じ配置
+      const spacing = (targetWidth - singleCharWidth * 4) / 3
+      positions.push({ char: name[1], x: singleCharWidth + spacing })
+      positions.push({ char: name[2], x: singleCharWidth * 2 + spacing * 2 })
+      positions.push({ char: name[3], x: targetWidth - singleCharWidth })
+    }
+    return { positions, scale: 1, width: targetWidth }
+  }
+
+  // 5文字の場合は均等配置
+  const spacing =
+    (targetWidth - name.length * singleCharWidth) / (name.length - 1)
+  name.split('').forEach((char, index) => {
+    positions.push({
+      char,
+      x: (singleCharWidth + spacing) * index,
     })
   })
   return { positions, scale: 1, width: targetWidth }

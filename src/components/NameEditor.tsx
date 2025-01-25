@@ -13,7 +13,7 @@ import {
 } from '~/atoms/names'
 import { settingAtom } from '~/atoms/setting'
 import { useAvailableFonts } from '~/hooks/useAvailableFonts'
-import type { GroupType } from '~/types/name'
+import type { GroupType, NameType } from '~/types/name'
 import { SimpleColorPicker } from './SimpleColorPicker'
 import { SimpleCombobox } from './SimpleCombobox'
 import { SimpleSelect } from './SimpleSelect'
@@ -43,29 +43,63 @@ const NameEditor: FC = () => {
 const NameEditForm: FC<{ nameId: string }> = ({ nameId }) => {
   const [name, setName] = useAtom(nameFamily(nameId))
 
+  const collection = createListCollection({
+    items: [
+      { label: '姓名', value: 'split' },
+      { label: '単一名', value: 'single' },
+    ] satisfies { label: string; value: NameType }[],
+  })
+
   return (
     <div className={stack({ gap: '4' })}>
       <h2 className={css({ fontSize: 'md', fontWeight: 'bold' })}>名前</h2>
       <div className={stack({ gap: '4' })}>
-        {name.kind === 'character' && (
+        <SimpleSelect
+          value={name.type}
+          onChange={(value) => {
+            if (value === 'split') {
+              setName({ ...name, type: 'split', firstName: '', lastName: '' })
+            } else {
+              setName({ ...name, type: 'single', name: '' })
+            }
+          }}
+          collection={collection}
+          label="形式"
+          placeholder="形式を選択"
+        />
+        {name.groupType === 'character' && (
           <Input
             value={name.character}
             onChange={(e) => setName({ ...name, character: e.target.value })}
             placeholder="キャラクター名"
           />
         )}
-        <div className={hstack({ gap: '2' })}>
+        {name.type === 'split' ? (
+          <div className={hstack({ gap: '2' })}>
+            <Input
+              value={name.lastName}
+              onChange={(e) =>
+                setName({ ...name, type: 'split', lastName: e.target.value })
+              }
+              placeholder="姓"
+            />
+            <Input
+              value={name.firstName}
+              onChange={(e) =>
+                setName({ ...name, type: 'split', firstName: e.target.value })
+              }
+              placeholder="名"
+            />
+          </div>
+        ) : (
           <Input
-            value={name.lastName}
-            onChange={(e) => setName({ ...name, lastName: e.target.value })}
-            placeholder="姓"
+            value={name.name}
+            onChange={(e) =>
+              setName({ ...name, type: 'single', name: e.target.value })
+            }
+            placeholder="名前"
           />
-          <Input
-            value={name.firstName}
-            onChange={(e) => setName({ ...name, firstName: e.target.value })}
-            placeholder="名"
-          />
-        </div>
+        )}
       </div>
     </div>
   )

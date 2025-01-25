@@ -22,7 +22,13 @@ export const nameGroupFamily = atomFamily((id: string) =>
 )
 
 export const nameFamily = atomFamily((id: string) =>
-  atom<Name>({ kind: 'normal', id, lastName: '', firstName: '' }),
+  atom<Name>({
+    groupType: 'normal',
+    type: 'split',
+    id,
+    lastName: '',
+    firstName: '',
+  }),
 )
 
 // TODO: 更新系atomは別ファイルに書いたほうが見通しいいかも
@@ -35,7 +41,8 @@ export const addNameAtom = atom(null, (get, set, groupId: string) => {
     nameIds: [...prev.nameIds, newId],
   }))
   set(nameFamily(newId), {
-    kind: group.type,
+    groupType: group.type,
+    type: 'split',
     id: newId,
     lastName: '',
     firstName: '',
@@ -85,13 +92,13 @@ export const changeGroupTypeAtom = atom(
       if (newType === 'character') {
         set(nameFamily(name.id), {
           ...name,
-          kind: 'character',
+          groupType: 'character',
           character: '',
         })
       } else {
         set(nameFamily(name.id), {
           ...name,
-          kind: 'normal',
+          groupType: 'normal',
         })
       }
     }

@@ -196,7 +196,10 @@ const NameTreeItem: FC<{
   const name = useAtomValue(nameFamily(nameId))
   const [selectedItem, setSelectedItem] = useAtom(selectedItemAtom)
 
-  const isNameEmpty = name.lastName === '' && name.firstName === ''
+  const isNameEmpty =
+    name.type === 'split'
+      ? name.lastName === '' && name.firstName === ''
+      : name.name === ''
 
   const handleNameDelete = useCallback(
     (e: React.MouseEvent) => {
@@ -219,7 +222,9 @@ const NameTreeItem: FC<{
           <span className={css({ color: 'fg.subtle' })}>空の名前</span>
         ) : (
           <span>
-            {name.lastName} {name.firstName}
+            {name.type === 'split'
+              ? `${name.lastName} ${name.firstName}`
+              : name.name}
           </span>
         )}
         <IconButton

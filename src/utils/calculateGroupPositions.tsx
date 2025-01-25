@@ -1,6 +1,9 @@
 'use client'
 import type { GroupWithName } from '~/types/name'
-import { calculatePositionsFromSplitName } from '~/utils/calculatePositions'
+import {
+  calculatePositionsFromSingleName,
+  calculatePositionsFromSplitName,
+} from '~/utils/calculatePositions'
 import { getCharacterDimensions } from '~/utils/getCharacterDimensions'
 
 type BaseGroupWithPosition = {
@@ -88,14 +91,19 @@ export const calculateGroupPositions = ({
         return group.names
           .filter((_, i) => i % columnCount === columnIndex)
           .map((name, index) => {
-            const { positions, scale, width } = calculatePositionsFromSplitName(
-              {
-                lastName: name.lastName,
-                firstName: name.firstName,
-                fontFamily,
-                fontSize,
-              },
-            )
+            const { positions, scale, width } =
+              name.type === 'split'
+                ? calculatePositionsFromSplitName({
+                    lastName: name.lastName,
+                    firstName: name.firstName,
+                    fontFamily,
+                    fontSize,
+                  })
+                : calculatePositionsFromSingleName({
+                    name: name.name,
+                    fontFamily,
+                    fontSize,
+                  })
 
             const nameY = group.groupName
               ? groupNameHeight + group.groupNameGap
@@ -119,7 +127,7 @@ export const calculateGroupPositions = ({
             nameY +
             index * (normalHeight + group.nameGap) +
             (normalHeight - characterHeight) / 2,
-          name: name.kind === 'character' ? name.character : '',
+          name: name.groupType === 'character' ? name.character : '',
         }
       })
 
