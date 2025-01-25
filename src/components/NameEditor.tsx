@@ -142,7 +142,7 @@ const GroupEditForm: FC<{ groupId: string }> = ({ groupId }) => {
           <NumberInput
             value={group.columns.toString()}
             onValueChange={(value) => {
-              setGroup({ ...group, columns: value.valueAsNumber })
+              setGroup({ ...group, columns: value.valueAsNumber || 0 })
             }}
           >
             カラム数
@@ -151,7 +151,7 @@ const GroupEditForm: FC<{ groupId: string }> = ({ groupId }) => {
         <NumberInput
           value={group.nameGap.toString()}
           onValueChange={(value) => {
-            setGroup({ ...group, nameGap: value.valueAsNumber })
+            setGroup({ ...group, nameGap: value.valueAsNumber || 0 })
           }}
         >
           名前間隔
@@ -159,7 +159,7 @@ const GroupEditForm: FC<{ groupId: string }> = ({ groupId }) => {
         <NumberInput
           value={group.groupNameGap.toString()}
           onValueChange={(value) => {
-            setGroup({ ...group, groupNameGap: value.valueAsNumber })
+            setGroup({ ...group, groupNameGap: value.valueAsNumber || 0 })
           }}
         >
           グループ名と名前の間隔
@@ -211,7 +211,7 @@ const SettingEditForm: FC = () => {
         <NumberInput
           value={setting.fontSize.toString()}
           onValueChange={(value) => {
-            setSetting({ ...setting, fontSize: value.valueAsNumber })
+            setSetting({ ...setting, fontSize: value.valueAsNumber || 0 })
           }}
         >
           フォントサイズ
@@ -219,7 +219,10 @@ const SettingEditForm: FC = () => {
         <NumberInput
           value={setting.groupNameFontSize.toString()}
           onValueChange={(value) => {
-            setSetting({ ...setting, groupNameFontSize: value.valueAsNumber })
+            setSetting({
+              ...setting,
+              groupNameFontSize: value.valueAsNumber || 0,
+            })
           }}
         >
           グループ名フォントサイズ
@@ -227,7 +230,10 @@ const SettingEditForm: FC = () => {
         <NumberInput
           value={setting.characterFontSize.toString()}
           onValueChange={(value) => {
-            setSetting({ ...setting, characterFontSize: value.valueAsNumber })
+            setSetting({
+              ...setting,
+              characterFontSize: value.valueAsNumber || 0,
+            })
           }}
         >
           キャラクター名フォントサイズ
@@ -235,7 +241,7 @@ const SettingEditForm: FC = () => {
         <NumberInput
           value={setting.columnGap.toString()}
           onValueChange={(value) => {
-            setSetting({ ...setting, columnGap: value.valueAsNumber })
+            setSetting({ ...setting, columnGap: value.valueAsNumber || 0 })
           }}
         >
           カラム間隔
@@ -243,7 +249,7 @@ const SettingEditForm: FC = () => {
         <NumberInput
           value={setting.groupGap.toString()}
           onValueChange={(value) => {
-            setSetting({ ...setting, groupGap: value.valueAsNumber })
+            setSetting({ ...setting, groupGap: value.valueAsNumber || 0 })
           }}
         >
           グループ間隔
