@@ -4,6 +4,8 @@ type BaseGroup = {
   id: string
   groupName: string
   nameIds: string[]
+  nameGap: number
+  groupNameGap: number
 }
 
 export type NormalGroup = BaseGroup & {

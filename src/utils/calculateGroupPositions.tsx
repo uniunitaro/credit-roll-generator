@@ -43,8 +43,6 @@ export const calculateGroupPositions = ({
   characterFontSize,
   columnGap,
   groupGap,
-  nameGap,
-  groupNameGap,
   groupNameFontSize,
 }: {
   groups: GroupWithName[]
@@ -53,8 +51,6 @@ export const calculateGroupPositions = ({
   characterFontSize: number
   columnGap: number
   groupGap: number
-  nameGap: number
-  groupNameGap: number
   groupNameFontSize: number
 }): CalculateGroupPositionsResult => {
   const { height: normalHeight } = getCharacterDimensions({
@@ -101,10 +97,12 @@ export const calculateGroupPositions = ({
               },
             )
 
-            const nameY = group.groupName ? groupNameHeight + groupNameGap : 0 // グループ名があればギャップ分下にずらす
+            const nameY = group.groupName
+              ? groupNameHeight + group.groupNameGap
+              : 0 // グループ名があればギャップ分下にずらす
             return {
               id: name.id,
-              y: nameY + index * (normalHeight + nameGap),
+              y: nameY + index * (normalHeight + group.nameGap),
               positions,
               scale,
               width,
@@ -113,13 +111,13 @@ export const calculateGroupPositions = ({
       })
 
       const characterNames = group.names.map((name, index) => {
-        const nameY = group.groupName ? groupNameHeight + groupNameGap : 0 // グループ名があればギャップ分下にずらす
+        const nameY = group.groupName ? groupNameHeight + group.groupNameGap : 0 // グループ名があればギャップ分下にずらす
         return {
           id: name.id,
           // 声優名とフォントサイズが異なるためキャラクター名が右カラムの声優名の縦中央に表示されるように調整
           y:
             nameY +
-            index * (normalHeight + nameGap) +
+            index * (normalHeight + group.nameGap) +
             (normalHeight - characterHeight) / 2,
           name: name.kind === 'character' ? name.character : '',
         }
@@ -127,9 +125,9 @@ export const calculateGroupPositions = ({
 
       const groupHeight =
         (Math.max(...nameColumns.map((column) => column.length)) - 1) *
-          (normalHeight + nameGap) +
+          (normalHeight + group.nameGap) +
         normalHeight +
-        (group.groupName ? groupNameHeight + groupNameGap : 0)
+        (group.groupName ? groupNameHeight + group.groupNameGap : 0)
       currentY += groupHeight + groupGap // 次のグループまでの間隔
 
       const groupWidth =
