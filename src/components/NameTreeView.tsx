@@ -45,6 +45,7 @@ const NameTreeView: FC = () => {
     <div
       className={grid({
         gridTemplateRows: 'minmax(0, 1fr) auto',
+        gridTemplateColumns: 'minmax(0, 1fr)',
         gap: '0',
         h: 'full',
       })}
@@ -151,7 +152,15 @@ const GroupTreeItem: FC<{
             {isGroupNameEmpty ? (
               <span className={css({ color: 'fg.subtle' })}>空のグループ</span>
             ) : (
-              <span>{group.groupName}</span>
+              <span
+                className={css({
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                })}
+              >
+                {group.groupName}
+              </span>
             )}
 
             <IconButton
@@ -221,7 +230,14 @@ const NameTreeItem: FC<{
         {isNameEmpty ? (
           <span className={css({ color: 'fg.subtle' })}>空の名前</span>
         ) : (
-          <span>
+          <span
+            className={css({
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              w: 'full',
+            })}
+          >
             {name.type === 'split'
               ? `${name.lastName} ${name.firstName}`
               : name.name}
