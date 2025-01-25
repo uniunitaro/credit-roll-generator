@@ -118,3 +118,15 @@ type SelectedItem =
   | undefined
 
 export const selectedItemAtom = atom<SelectedItem>()
+
+export const getGroupByIdAtom = (groupId: string | undefined) =>
+  atom((get) => {
+    if (!groupId) return undefined
+    return get(nameGroupFamily(groupId))
+  })
+
+export const getNameByIdAtom = (nameId: string | undefined) =>
+  atom((get) => {
+    if (!nameId) return undefined
+    return get(nameFamily(nameId))
+  })

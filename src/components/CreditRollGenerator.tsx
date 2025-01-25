@@ -10,7 +10,7 @@ import { grid } from 'styled-system/patterns'
 import { loadStateAtom, saveStateAtom } from '~/atoms/persistence'
 import type { NameCanvasRef } from './NameCanvas'
 import NameEditor from './NameEditor'
-import NameTreeView from './NameTreeView'
+import NameTreeView from './treeView/NameTreeView'
 
 const NameCanvas = dynamic(() => import('./NameCanvas'), { ssr: false })
 
