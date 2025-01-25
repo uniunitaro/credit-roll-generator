@@ -22,16 +22,19 @@ export type CharacterGroup = BaseGroup & {
 export type NameGroup = NormalGroup | NoTypesettingGroup | CharacterGroup
 export type GroupType = NameGroup['type']
 
-type SplitName = {
-  type: 'split'
+type BaseBaseName = {
   id: string
+  fontSize: number | undefined
+}
+
+type SplitName = BaseBaseName & {
+  type: 'split'
   firstName: string
   lastName: string
 }
 
-type SingleName = {
+type SingleName = BaseBaseName & {
   type: 'single'
-  id: string
   name: string
 }
 
@@ -44,6 +47,7 @@ export type NormalName = BaseName & {
 export type CharacterName = BaseName & {
   groupType: 'character'
   character: string
+  characterFontSize: number | undefined
 }
 
 export type Name = NormalName | CharacterName

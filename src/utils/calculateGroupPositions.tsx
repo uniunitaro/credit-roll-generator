@@ -17,6 +17,8 @@ type BaseGroupWithPosition = {
     scale: number
     width: number
     name: string
+    fontSize: number
+    height: number
   }[][]
 }
 type NormalGroupWithPosition = BaseGroupWithPosition & {
@@ -31,6 +33,7 @@ type CharacterGroupWithPosition = BaseGroupWithPosition & {
     id: string
     y: number
     name: string
+    fontSize?: number
   }[]
 }
 type NoTypesettingGroupWithPosition = BaseGroupWithPosition & {
@@ -63,15 +66,6 @@ export const calculateGroupPositions = ({
   groupGap: number
   groupNameFontSize: number
 }): CalculateGroupPositionsResult => {
-  const { height: normalHeight } = getCharacterDimensions({
-    fontFamily,
-    fontSize,
-  })
-  const { height: characterHeight } = getCharacterDimensions({
-    fontFamily,
-    fontSize: characterFontSize,
-  })
-
   const { height: groupNameHeight } = getCharacterDimensions({
     fontFamily,
     fontSize: groupNameFontSize,
@@ -98,26 +92,46 @@ export const calculateGroupPositions = ({
         return group.names
           .filter((_, i) => i % columnCount === columnIndex)
           .map((name, index) => {
+            const nameFontSize = name.fontSize ?? fontSize
             const { positions, scale, width } =
               name.type === 'split'
                 ? calculatePositionsFromSplitName({
                     lastName: name.lastName,
                     firstName: name.firstName,
                     fontFamily,
-                    fontSize,
+                    fontSize: nameFontSize,
                   })
                 : calculatePositionsFromSingleName({
                     name: name.name,
                     fontFamily,
-                    fontSize,
+                    fontSize: nameFontSize,
                   })
+
+            const { height: nameHeight } = getCharacterDimensions({
+              fontFamily,
+              fontSize: nameFontSize,
+            })
 
             const nameY = group.groupName
               ? groupNameHeight + group.groupNameGap
               : 0 // グループ名があればギャップ分下にずらす
+
+            // 上の名前までの高さを計算
+            const previousNamesHeight = group.names
+              .filter((_, i) => i % columnCount === columnIndex)
+              .slice(0, index)
+              .reduce((acc, prevName) => {
+                const prevFontSize = prevName.fontSize ?? fontSize
+                const { height: prevHeight } = getCharacterDimensions({
+                  fontFamily,
+                  fontSize: prevFontSize,
+                })
+                return acc + prevHeight + group.nameGap
+              }, 0)
+
             return {
               id: name.id,
-              y: nameY + index * (normalHeight + group.nameGap),
+              y: nameY + previousNamesHeight,
               positions,
               scale,
               width,
@@ -125,28 +139,65 @@ export const calculateGroupPositions = ({
                 name.type === 'split'
                   ? name.firstName + name.lastName
                   : name.name,
+              fontSize: nameFontSize,
+              height: nameHeight,
             }
           })
       })
 
       const characterNames = group.names.map((name, index) => {
         const nameY = group.groupName ? groupNameHeight + group.groupNameGap : 0 // グループ名があればギャップ分下にずらす
+
+        const nameFontSize = name.fontSize ?? fontSize
+        const { height: nameHeight } = getCharacterDimensions({
+          fontFamily,
+          fontSize: nameFontSize,
+        })
+
+        const charFontSize =
+          name.groupType === 'character'
+            ? (name.characterFontSize ?? characterFontSize)
+            : undefined
+        const { height: charHeight } = charFontSize
+          ? getCharacterDimensions({
+              fontFamily,
+              fontSize: charFontSize,
+            })
+          : { height: 0 }
+
+        // 上の名前までの高さを計算
+        const previousNamesHeight = group.names
+          .slice(0, index)
+          .reduce((acc, prevName) => {
+            const prevFontSize = prevName.fontSize ?? fontSize
+            const { height: prevHeight } = getCharacterDimensions({
+              fontFamily,
+              fontSize: prevFontSize,
+            })
+            return acc + prevHeight + group.nameGap
+          }, 0)
+
         return {
           id: name.id,
-          // 声優名とフォントサイズが異なるためキャラクター名が右カラムの声優名の縦中央に表示されるように調整
-          y:
-            nameY +
-            index * (normalHeight + group.nameGap) +
-            (normalHeight - characterHeight) / 2,
+          y: nameY + previousNamesHeight + (nameHeight - charHeight) / 2,
           name: name.groupType === 'character' ? name.character : '',
+          fontSize: charFontSize,
         }
       })
 
+      // 各カラムの高さを計算
+      const columnHeights = nameColumns.map((column) =>
+        column.reduce(
+          (acc, name, index) =>
+            acc + name.height + (index < column.length - 1 ? group.nameGap : 0),
+          0,
+        ),
+      )
+
       const groupHeight =
-        (Math.max(...nameColumns.map((column) => column.length)) - 1) *
-          (normalHeight + group.nameGap) +
-        normalHeight +
+        Math.max(...columnHeights) +
         (group.groupName ? groupNameHeight + group.groupNameGap : 0)
+
       currentY += groupHeight + groupGap // 次のグループまでの間隔
 
       const groupWidth =

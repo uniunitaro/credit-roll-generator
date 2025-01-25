@@ -2,6 +2,7 @@
 
 import { createListCollection } from '@ark-ui/react'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { RotateCcwIcon } from 'lucide-react'
 import type { FC } from 'react'
 import { css } from 'styled-system/css'
 import { hstack, stack } from 'styled-system/patterns'
@@ -17,6 +18,7 @@ import type { GroupType, NameType } from '~/types/name'
 import { SimpleColorPicker } from './SimpleColorPicker'
 import { SimpleCombobox } from './SimpleCombobox'
 import { SimpleSelect } from './SimpleSelect'
+import { IconButton } from './ui/icon-button'
 import { Input } from './ui/input'
 import { NumberInput } from './ui/number-input'
 
@@ -100,6 +102,49 @@ const NameEditForm: FC<{ nameId: string }> = ({ nameId }) => {
             placeholder="名前"
           />
         )}
+        {name.groupType === 'character' && (
+          <div className={hstack({ gap: '2', alignItems: 'flex-end' })}>
+            <NumberInput
+              value={name.characterFontSize?.toString() ?? ''}
+              onValueChange={(value) => {
+                setName({
+                  ...name,
+                  characterFontSize: value.valueAsNumber || undefined,
+                })
+              }}
+              placeholder="全体設定の値を使用"
+            >
+              キャラクター名フォントサイズ
+            </NumberInput>
+            <IconButton
+              variant="ghost"
+              size="sm"
+              aria-label="キャラクター名フォントサイズをリセット"
+              onClick={() => setName({ ...name, characterFontSize: undefined })}
+            >
+              <RotateCcwIcon />
+            </IconButton>
+          </div>
+        )}
+        <div className={hstack({ gap: '2', alignItems: 'flex-end' })}>
+          <NumberInput
+            value={name.fontSize?.toString() ?? ''}
+            onValueChange={(value) => {
+              setName({ ...name, fontSize: value.valueAsNumber || undefined })
+            }}
+            placeholder="全体設定の値を使用"
+          >
+            名前フォントサイズ
+          </NumberInput>
+          <IconButton
+            variant="ghost"
+            size="sm"
+            aria-label="名前フォントサイズをリセット"
+            onClick={() => setName({ ...name, fontSize: undefined })}
+          >
+            <RotateCcwIcon />
+          </IconButton>
+        </div>
       </div>
     </div>
   )

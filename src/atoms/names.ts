@@ -28,6 +28,7 @@ export const nameFamily = atomFamily((id: string) =>
     id,
     lastName: '',
     firstName: '',
+    fontSize: undefined,
   }),
 )
 
@@ -46,7 +47,9 @@ export const addNameAtom = atom(null, (get, set, groupId: string) => {
     id: newId,
     lastName: '',
     firstName: '',
+    fontSize: undefined,
     character: '',
+    characterFontSize: undefined,
   })
   set(selectedItemAtom, { type: 'name', id: newId })
 })
@@ -94,6 +97,7 @@ export const changeGroupTypeAtom = atom(
           ...name,
           groupType: 'character',
           character: '',
+          characterFontSize: undefined,
         })
       } else {
         set(nameFamily(name.id), {

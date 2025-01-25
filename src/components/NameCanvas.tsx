@@ -134,10 +134,11 @@ const NameCanvas: FC<{
                       x={
                         logicalWidth / 2 -
                         columnGap / 2 -
-                        charName.name.length * characterFontSize
+                        charName.name.length *
+                          (charName.fontSize ?? characterFontSize)
                       }
                       y={charName.y}
-                      fontSize={characterFontSize}
+                      fontSize={charName.fontSize ?? characterFontSize}
                       fontFamily={fontFamily}
                       fill={fontColor}
                       rotation={0.05}
@@ -157,7 +158,7 @@ const NameCanvas: FC<{
                           key={i}
                           text={pos.char}
                           x={pos.x * name.scale}
-                          fontSize={fontSize}
+                          fontSize={name.fontSize}
                           fontFamily={fontFamily}
                           scaleX={name.scale}
                           fill={fontColor}
@@ -185,7 +186,7 @@ const NameCanvas: FC<{
                               key={i}
                               text={pos.char}
                               x={pos.x * name.scale}
-                              fontSize={fontSize}
+                              fontSize={name.fontSize}
                               fontFamily={fontFamily}
                               scaleX={name.scale}
                               fill={fontColor}
@@ -210,7 +211,7 @@ const NameCanvas: FC<{
                         <Group key={name.id} y={name.y}>
                           <Text
                             text={name.name}
-                            fontSize={fontSize}
+                            fontSize={name.fontSize}
                             fontFamily={fontFamily}
                             align="center"
                             width={logicalWidth}

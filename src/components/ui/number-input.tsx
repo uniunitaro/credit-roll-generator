@@ -1,18 +1,20 @@
 import { forwardRef } from 'react'
 import * as StyledNumberInput from './styled/number-input'
 
-export interface NumberInputProps extends StyledNumberInput.RootProps {}
+export interface NumberInputProps extends StyledNumberInput.RootProps {
+  placeholder?: string
+}
 
 export const NumberInput = forwardRef<HTMLDivElement, NumberInputProps>(
   (props, ref) => {
-    const { children, ...rootProps } = props
+    const { children, placeholder, ...rootProps } = props
     return (
       <StyledNumberInput.Root ref={ref} {...rootProps}>
         {children && (
           <StyledNumberInput.Label>{children}</StyledNumberInput.Label>
         )}
         <StyledNumberInput.Control>
-          <StyledNumberInput.Input />
+          <StyledNumberInput.Input placeholder={placeholder} />
           <StyledNumberInput.IncrementTrigger>
             <ChevronUpIcon />
           </StyledNumberInput.IncrementTrigger>
