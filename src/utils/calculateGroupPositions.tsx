@@ -137,7 +137,7 @@ export const calculateGroupPositions = ({
               width,
               name:
                 name.type === 'split'
-                  ? name.firstName + name.lastName
+                  ? name.lastName + name.firstName
                   : name.name,
               fontSize: nameFontSize,
               height: nameHeight,
