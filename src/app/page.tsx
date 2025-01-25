@@ -1,6 +1,7 @@
 'use client'
 
 import type Konva from 'konva'
+import { ImageIcon } from 'lucide-react'
 import type { FC } from 'react'
 import { useRef } from 'react'
 import { container, grid, hstack } from 'styled-system/patterns'
@@ -37,7 +38,10 @@ const Home: FC = () => {
           <h1 className={css({ fontSize: '2xl', fontWeight: 'bold' })}>
             エンドロールジェネレーター
           </h1>
-          <Button onClick={handleDownload}>画像出力</Button>
+          <Button onClick={handleDownload}>
+            <ImageIcon className={css({ width: '16px', height: '16px' })} />
+            画像出力
+          </Button>
         </div>
         <CreditRollGenerator stageRef={stageRef} />
       </div>

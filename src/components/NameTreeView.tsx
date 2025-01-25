@@ -1,7 +1,7 @@
 'use client'
 
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { Plus, Settings, X } from 'lucide-react'
+import { PlusIcon, SettingsIcon, XIcon } from 'lucide-react'
 import { type ComponentProps, type FC, useCallback } from 'react'
 import { css } from 'styled-system/css'
 import { grid, hstack, stack } from 'styled-system/patterns'
@@ -73,7 +73,7 @@ const NameTreeView: FC = () => {
             onClick={handleGroupAdd}
           >
             <div className={hstack({ gap: '2' })}>
-              <Plus />
+              <PlusIcon />
               グループを追加
             </div>
           </Button>
@@ -90,10 +90,8 @@ const NameTreeView: FC = () => {
           })}
           onClick={handleSettingClick}
         >
-          <div className={hstack({ gap: '2' })}>
-            <Settings />
-            全体設定
-          </div>
+          <SettingsIcon />
+          全体設定
         </Button>
       </div>
     </div>
@@ -162,7 +160,7 @@ const GroupTreeItem: FC<{
               aria-label="グループを削除"
               onClick={handleGroupDelete}
             >
-              <X />
+              <XIcon />
             </IconButton>
           </div>
         </TreeItemButton>
@@ -182,7 +180,7 @@ const GroupTreeItem: FC<{
           onClick={handleNameAdd}
         >
           <div className={hstack({ gap: '2' })}>
-            <Plus />
+            <PlusIcon />
             名前を追加
           </div>
         </Button>
@@ -230,7 +228,7 @@ const NameTreeItem: FC<{
           aria-label="名前を削除"
           onClick={handleNameDelete}
         >
-          <X />
+          <XIcon />
         </IconButton>
       </div>
     </TreeItemButton>
