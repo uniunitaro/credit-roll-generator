@@ -197,6 +197,22 @@ const SettingEditForm: FC = () => {
         >
           グループ間隔
         </NumberInput>
+        <NumberInput
+          value={setting.nameGap.toString()}
+          onValueChange={(value) => {
+            setSetting({ ...setting, nameGap: value.valueAsNumber })
+          }}
+        >
+          名前間隔
+        </NumberInput>
+        <NumberInput
+          value={setting.groupNameGap.toString()}
+          onValueChange={(value) => {
+            setSetting({ ...setting, groupNameGap: value.valueAsNumber })
+          }}
+        >
+          グループ名と名前の間隔
+        </NumberInput>
       </div>
     </div>
   )

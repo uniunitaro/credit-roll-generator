@@ -7,4 +7,6 @@ export type Setting = {
   characterFontSize: number
   columnGap: number
   groupGap: number
+  nameGap: number
+  groupNameGap: number
 }
