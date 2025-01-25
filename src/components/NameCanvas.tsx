@@ -198,6 +198,31 @@ const NameCanvas: FC<{
                   ))}
                 </Group>
               )}
+              {group.type === 'noTypesetting' && (
+                <Group>
+                  {group.nameColumns.map((column, columnIndex) => (
+                    <Group
+                      // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                      key={columnIndex}
+                      y={0}
+                    >
+                      {column.map((name) => (
+                        <Group key={name.id} y={name.y}>
+                          <Text
+                            text={name.name}
+                            fontSize={fontSize}
+                            fontFamily={fontFamily}
+                            align="center"
+                            width={logicalWidth}
+                            fill={fontColor}
+                            rotation={0.05}
+                          />
+                        </Group>
+                      ))}
+                    </Group>
+                  ))}
+                </Group>
+              )}
             </Group>
           ))}
         </Layer>

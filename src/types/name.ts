@@ -11,11 +11,15 @@ export type NormalGroup = BaseGroup & {
   columns: number
 }
 
+export type NoTypesettingGroup = BaseGroup & {
+  type: 'noTypesetting'
+}
+
 export type CharacterGroup = BaseGroup & {
   type: 'character'
 }
 
-export type NameGroup = NormalGroup | CharacterGroup
+export type NameGroup = NormalGroup | NoTypesettingGroup | CharacterGroup
 export type GroupType = NameGroup['type']
 
 type SplitName = {
@@ -34,7 +38,7 @@ type SingleName = {
 type BaseName = SplitName | SingleName
 
 export type NormalName = BaseName & {
-  groupType: 'normal'
+  groupType: 'normal' | 'noTypesetting'
 }
 
 export type CharacterName = BaseName & {

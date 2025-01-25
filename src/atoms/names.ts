@@ -72,17 +72,17 @@ export const changeGroupTypeAtom = atom(
     const names = group.nameIds.map((nameId) => get(nameFamily(nameId)))
 
     const newGroup: NameGroup =
-      newType === 'normal'
+      newType === 'character'
         ? {
             ...group,
-            type: 'normal',
-            columns: DEFAULT_COLUMNS,
+            type: 'character',
             nameGap: group.nameGap,
             groupNameGap: group.groupNameGap,
           }
         : {
             ...group,
-            type: 'character',
+            type: newType,
+            columns: DEFAULT_COLUMNS,
             nameGap: group.nameGap,
             groupNameGap: group.groupNameGap,
           }

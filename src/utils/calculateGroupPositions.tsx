@@ -16,6 +16,7 @@ type BaseGroupWithPosition = {
     positions: { char: string; x: number }[]
     scale: number
     width: number
+    name: string
   }[][]
 }
 type NormalGroupWithPosition = BaseGroupWithPosition & {
@@ -32,7 +33,13 @@ type CharacterGroupWithPosition = BaseGroupWithPosition & {
     name: string
   }[]
 }
-type GroupWithPosition = NormalGroupWithPosition | CharacterGroupWithPosition
+type NoTypesettingGroupWithPosition = BaseGroupWithPosition & {
+  type: 'noTypesetting'
+}
+type GroupWithPosition =
+  | NormalGroupWithPosition
+  | CharacterGroupWithPosition
+  | NoTypesettingGroupWithPosition
 
 export type CalculateGroupPositionsResult = {
   groups: GroupWithPosition[]
@@ -114,6 +121,10 @@ export const calculateGroupPositions = ({
               positions,
               scale,
               width,
+              name:
+                name.type === 'split'
+                  ? name.firstName + name.lastName
+                  : name.name,
             }
           })
       })

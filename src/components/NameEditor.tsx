@@ -114,6 +114,7 @@ const GroupEditForm: FC<{ groupId: string }> = ({ groupId }) => {
     items: [
       { label: '通常', value: 'normal' },
       { label: 'キャラクター', value: 'character' },
+      { label: '字取りなし', value: 'noTypesetting' },
     ] satisfies { label: string; value: GroupType }[],
   })
 
