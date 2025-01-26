@@ -139,7 +139,8 @@ const NameCanvas: FC<{
                         logicalWidth / 2 -
                         columnGap / 2 -
                         charName.name.length *
-                          (charName.fontSize ?? characterFontSize)
+                          (charName.fontSize ?? characterFontSize) +
+                        group.offsetX
                       }
                       y={charName.y}
                       fontSize={charName.fontSize ?? characterFontSize}
@@ -153,7 +154,7 @@ const NameCanvas: FC<{
                   {group.nameColumns.at(0)?.map((name) => (
                     <Group
                       key={name.id}
-                      x={logicalWidth / 2 + columnGap / 2}
+                      x={logicalWidth / 2 + columnGap / 2 + group.offsetX}
                       y={name.y}
                     >
                       {name.positions.map((pos, i) => (
@@ -179,7 +180,10 @@ const NameCanvas: FC<{
                     <Group
                       // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                       key={columnIndex}
-                      x={columnIndex * (group.columnWidth + columnGap)}
+                      x={
+                        columnIndex * (group.columnWidth + columnGap) +
+                        group.offsetX
+                      }
                       y={0}
                     >
                       {column.map((name) => (
@@ -209,6 +213,7 @@ const NameCanvas: FC<{
                     <Group
                       // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                       key={columnIndex}
+                      x={group.offsetX}
                       y={0}
                     >
                       {column.map((name) => (

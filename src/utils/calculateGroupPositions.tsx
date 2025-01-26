@@ -20,6 +20,7 @@ type BaseGroupWithPosition = {
     fontSize: number
     height: number
   }[][]
+  offsetX: number
 }
 type NormalGroupWithPosition = BaseGroupWithPosition & {
   type: 'normal'
@@ -208,7 +209,7 @@ export const calculateGroupPositions = ({
         Math.max(...columnHeights) +
         (group.groupName ? groupNameHeight + effectiveGroupNameGap : 0)
 
-      currentY += groupHeight + groupGap // 次のグループまでの間隔
+      currentY += groupHeight + groupGap + group.offsetY // 次のグループまでの間隔
 
       const groupWidth =
         columnWidth * columnCount + (columnCount - 1) * columnGap
@@ -216,13 +217,14 @@ export const calculateGroupPositions = ({
       return {
         type: group.type,
         id: group.id,
-        y: groupStartY,
+        y: groupStartY + group.offsetY,
         groupName: group.groupName,
         nameColumns,
         characterNames,
         columnCount,
         columnWidth,
         width: groupWidth,
+        offsetX: group.offsetX,
       }
     }),
     totalHeight: currentY - groupGap + PADDING_Y, // 最後のグループ後のギャップを除く

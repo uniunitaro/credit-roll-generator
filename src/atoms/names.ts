@@ -13,6 +13,8 @@ export const nameGroupFamily = atomFamily((id: string) =>
     columns: DEFAULT_COLUMNS,
     nameGap: undefined,
     groupNameGap: undefined,
+    offsetX: 0,
+    offsetY: 0,
     nameIds: [crypto.randomUUID()],
   }),
 )

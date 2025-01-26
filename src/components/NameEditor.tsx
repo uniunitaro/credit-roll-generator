@@ -234,6 +234,22 @@ const GroupEditForm: FC<{ groupId: string }> = ({ groupId }) => {
             <RotateCcwIcon />
           </IconButton>
         </div>
+        <NumberInput
+          value={group.offsetX.toString()}
+          onValueChange={(value) => {
+            setGroup({ ...group, offsetX: value.valueAsNumber || 0 })
+          }}
+        >
+          X軸オフセット
+        </NumberInput>
+        <NumberInput
+          value={group.offsetY.toString()}
+          onValueChange={(value) => {
+            setGroup({ ...group, offsetY: value.valueAsNumber || 0 })
+          }}
+        >
+          Y軸オフセット
+        </NumberInput>
       </div>
     </div>
   )
