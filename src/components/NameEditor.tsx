@@ -109,7 +109,9 @@ const NameEditForm: FC<{ nameId: string }> = ({ nameId }) => {
               onValueChange={(value) => {
                 setName({
                   ...name,
-                  characterFontSize: value.valueAsNumber || undefined,
+                  characterFontSize: Number.isNaN(value.valueAsNumber)
+                    ? undefined
+                    : value.valueAsNumber,
                 })
               }}
               placeholder="全体設定の値を使用"
@@ -130,7 +132,12 @@ const NameEditForm: FC<{ nameId: string }> = ({ nameId }) => {
           <NumberInput
             value={name.fontSize?.toString() ?? ''}
             onValueChange={(value) => {
-              setName({ ...name, fontSize: value.valueAsNumber || undefined })
+              setName({
+                ...name,
+                fontSize: Number.isNaN(value.valueAsNumber)
+                  ? undefined
+                  : value.valueAsNumber,
+              })
             }}
             placeholder="全体設定の値を使用"
           >
@@ -195,9 +202,38 @@ const GroupEditForm: FC<{ groupId: string }> = ({ groupId }) => {
         )}
         <div className={hstack({ gap: '2', alignItems: 'flex-end' })}>
           <NumberInput
+            value={group.columnGap?.toString() ?? ''}
+            onValueChange={(value) => {
+              setGroup({
+                ...group,
+                columnGap: Number.isNaN(value.valueAsNumber)
+                  ? undefined
+                  : value.valueAsNumber,
+              })
+            }}
+            placeholder="全体設定の値を使用"
+          >
+            カラム間隔
+          </NumberInput>
+          <IconButton
+            variant="ghost"
+            size="sm"
+            aria-label="カラム間隔をリセット"
+            onClick={() => setGroup({ ...group, columnGap: undefined })}
+          >
+            <RotateCcwIcon />
+          </IconButton>
+        </div>
+        <div className={hstack({ gap: '2', alignItems: 'flex-end' })}>
+          <NumberInput
             value={group.nameGap?.toString() ?? ''}
             onValueChange={(value) => {
-              setGroup({ ...group, nameGap: value.valueAsNumber || undefined })
+              setGroup({
+                ...group,
+                nameGap: Number.isNaN(value.valueAsNumber)
+                  ? undefined
+                  : value.valueAsNumber,
+              })
             }}
             placeholder="全体設定の値を使用"
           >
@@ -218,7 +254,9 @@ const GroupEditForm: FC<{ groupId: string }> = ({ groupId }) => {
             onValueChange={(value) => {
               setGroup({
                 ...group,
-                groupNameGap: value.valueAsNumber || undefined,
+                groupNameGap: Number.isNaN(value.valueAsNumber)
+                  ? undefined
+                  : value.valueAsNumber,
               })
             }}
             placeholder="全体設定の値を使用"

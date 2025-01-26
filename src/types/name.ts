@@ -6,6 +6,7 @@ type BaseGroup = {
   groupNameGap: number | undefined
   offsetX: number
   offsetY: number
+  columnGap: number | undefined
 }
 
 export type NormalGroup = BaseGroup & {

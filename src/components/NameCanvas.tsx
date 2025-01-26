@@ -137,7 +137,7 @@ const NameCanvas: FC<{
                       // FIXME: 今はfontSizeと一文字の横幅が同じと仮定している、英字のときとかずれる
                       x={
                         logicalWidth / 2 -
-                        columnGap / 2 -
+                        group.columnGap / 2 -
                         charName.name.length *
                           (charName.fontSize ?? characterFontSize) +
                         group.offsetX
@@ -154,7 +154,7 @@ const NameCanvas: FC<{
                   {group.nameColumns.at(0)?.map((name) => (
                     <Group
                       key={name.id}
-                      x={logicalWidth / 2 + columnGap / 2 + group.offsetX}
+                      x={logicalWidth / 2 + group.columnGap / 2 + group.offsetX}
                       y={name.y}
                     >
                       {name.positions.map((pos, i) => (
@@ -181,7 +181,7 @@ const NameCanvas: FC<{
                       // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                       key={columnIndex}
                       x={
-                        columnIndex * (group.columnWidth + columnGap) +
+                        columnIndex * (group.columnWidth + group.columnGap) +
                         group.offsetX
                       }
                       y={0}

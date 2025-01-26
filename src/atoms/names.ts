@@ -13,6 +13,7 @@ export const nameGroupFamily = atomFamily((id: string) =>
     columns: DEFAULT_COLUMNS,
     nameGap: undefined,
     groupNameGap: undefined,
+    columnGap: undefined,
     offsetX: 0,
     offsetY: 0,
     nameIds: [crypto.randomUUID()],
@@ -77,15 +78,11 @@ export const changeGroupTypeAtom = atom(
         ? {
             ...group,
             type: 'character',
-            nameGap: group.nameGap,
-            groupNameGap: group.groupNameGap,
           }
         : {
             ...group,
             type: newType,
             columns: DEFAULT_COLUMNS,
-            nameGap: group.nameGap,
-            groupNameGap: group.groupNameGap,
           }
     set(nameGroupFamily(groupId), newGroup)
 
