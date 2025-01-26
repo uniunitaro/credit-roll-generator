@@ -64,7 +64,13 @@ const NameTreeItem: FC<{
         onClick={() => setSelectedItem({ type: 'name', id: nameId })}
       >
         <DragHandle listeners={listeners} />
-        <div className={hstack({ justifyContent: 'space-between', w: 'full' })}>
+        <div
+          className={hstack({
+            justifyContent: 'space-between',
+            w: 'full',
+            minW: '0',
+          })}
+        >
           {isNameEmpty ? (
             <span className={css({ color: 'fg.subtle' })}>空の名前</span>
           ) : (
@@ -73,7 +79,6 @@ const NameTreeItem: FC<{
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
-                w: 'full',
               })}
             >
               {name.type === 'split'

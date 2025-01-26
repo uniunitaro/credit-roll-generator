@@ -132,7 +132,11 @@ const GroupTreeItem: FC<{
         >
           <DragHandle listeners={listeners} />
           <div
-            className={hstack({ justifyContent: 'space-between', w: 'full' })}
+            className={hstack({
+              justifyContent: 'space-between',
+              w: 'full',
+              minW: '0',
+            })}
           >
             {isGroupNameEmpty ? (
               <span className={css({ color: 'fg.subtle' })}>空のグループ</span>
