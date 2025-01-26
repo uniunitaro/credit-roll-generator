@@ -3,27 +3,35 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "prepare": "panda codegen",
+    "prepare": "panda codegen && husky",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "format-and-lint": "biome check .",
     "format-and-lint:fix": "biome check . --write",
+    "typecheck": "tsc --noEmit",
     "build:worker": "opennextjs-cloudflare",
     "dev:worker": "wrangler dev --port 8771",
-    "preview": "npm run build:worker && npm run dev:worker",
-    "deploy": "npm run build:worker && wrangler deploy",
+    "preview": "pnpm run build:worker && pnpm run dev:worker",
+    "deploy": "pnpm run build:worker && wrangler deploy",
+    "deploy:dev": "pnpm run build:worker && wrangler deploy --env dev",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
     "@ark-ui/react": "^4.8.1",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "babel-plugin-react-compiler": "19.0.0-beta-e552027-20250112",
+    "jotai": "^2.11.0",
     "konva": "^9.3.18",
+    "lucide-react": "^0.473.0",
     "next": "15.1.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-konva": "^19.0.2",
-    "react-use": "^17.6.0"
+    "react-use": "^17.6.0",
+    "valibot": "0.42.1"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
@@ -34,6 +42,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "caniuse-lite": "^1.0.30001692",
+    "husky": "^9.1.7",
     "postcss": "^8.5.1",
     "typescript": "^5",
     "wrangler": "^3.102.0"

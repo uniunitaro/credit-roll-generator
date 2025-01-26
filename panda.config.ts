@@ -18,6 +18,29 @@ export default defineConfig({
       html: {
         '--global-font-body': 'sans-serif',
       },
+      '@media(hover: hover) and (pointer: fine)': {
+        '::-webkit-scrollbar': {
+          width: '16px',
+          height: '16px',
+        },
+        '::-webkit-scrollbar-thumb': {
+          bg: 'gray.8',
+          borderRadius: '8px',
+          border: '4px solid transparent',
+          backgroundClip: 'content-box',
+          '&:hover': {
+            bg: 'gray.10',
+            borderRadius: '8px',
+            border: '4px solid transparent',
+            backgroundClip: 'content-box',
+          },
+        },
+      },
+      '@supports not selector(::-webkit-scrollbar)': {
+        '*': {
+          scrollbarWidth: 'thin',
+        },
+      },
     },
   },
   outdir: 'styled-system',
