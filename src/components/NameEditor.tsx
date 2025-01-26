@@ -193,22 +193,47 @@ const GroupEditForm: FC<{ groupId: string }> = ({ groupId }) => {
             カラム数
           </NumberInput>
         )}
-        <NumberInput
-          value={group.nameGap.toString()}
-          onValueChange={(value) => {
-            setGroup({ ...group, nameGap: value.valueAsNumber || 0 })
-          }}
-        >
-          名前間隔
-        </NumberInput>
-        <NumberInput
-          value={group.groupNameGap.toString()}
-          onValueChange={(value) => {
-            setGroup({ ...group, groupNameGap: value.valueAsNumber || 0 })
-          }}
-        >
-          グループ名と名前の間隔
-        </NumberInput>
+        <div className={hstack({ gap: '2', alignItems: 'flex-end' })}>
+          <NumberInput
+            value={group.nameGap?.toString() ?? ''}
+            onValueChange={(value) => {
+              setGroup({ ...group, nameGap: value.valueAsNumber || undefined })
+            }}
+            placeholder="全体設定の値を使用"
+          >
+            名前間隔
+          </NumberInput>
+          <IconButton
+            variant="ghost"
+            size="sm"
+            aria-label="名前間隔をリセット"
+            onClick={() => setGroup({ ...group, nameGap: undefined })}
+          >
+            <RotateCcwIcon />
+          </IconButton>
+        </div>
+        <div className={hstack({ gap: '2', alignItems: 'flex-end' })}>
+          <NumberInput
+            value={group.groupNameGap?.toString() ?? ''}
+            onValueChange={(value) => {
+              setGroup({
+                ...group,
+                groupNameGap: value.valueAsNumber || undefined,
+              })
+            }}
+            placeholder="全体設定の値を使用"
+          >
+            グループ名と名前の間隔
+          </NumberInput>
+          <IconButton
+            variant="ghost"
+            size="sm"
+            aria-label="グループ名と名前の間隔をリセット"
+            onClick={() => setGroup({ ...group, groupNameGap: undefined })}
+          >
+            <RotateCcwIcon />
+          </IconButton>
+        </div>
       </div>
     </div>
   )
@@ -298,6 +323,22 @@ const SettingEditForm: FC = () => {
           }}
         >
           グループ間隔
+        </NumberInput>
+        <NumberInput
+          value={setting.nameGap.toString()}
+          onValueChange={(value) => {
+            setSetting({ ...setting, nameGap: value.valueAsNumber || 0 })
+          }}
+        >
+          名前間隔
+        </NumberInput>
+        <NumberInput
+          value={setting.groupNameGap.toString()}
+          onValueChange={(value) => {
+            setSetting({ ...setting, groupNameGap: value.valueAsNumber || 0 })
+          }}
+        >
+          グループ名と名前の間隔
         </NumberInput>
       </div>
     </div>

@@ -57,6 +57,8 @@ export const calculateGroupPositions = ({
   columnGap,
   groupGap,
   groupNameFontSize,
+  nameGap,
+  groupNameGap,
 }: {
   groups: GroupWithName[]
   fontFamily: string
@@ -65,6 +67,8 @@ export const calculateGroupPositions = ({
   columnGap: number
   groupGap: number
   groupNameFontSize: number
+  nameGap: number
+  groupNameGap: number
 }): CalculateGroupPositionsResult => {
   const { height: groupNameHeight } = getCharacterDimensions({
     fontFamily,
@@ -86,6 +90,8 @@ export const calculateGroupPositions = ({
       const groupStartY = currentY
 
       const columnCount = group.type === 'normal' ? group.columns : 1
+      const effectiveNameGap = group.nameGap ?? nameGap
+      const effectiveGroupNameGap = group.groupNameGap ?? groupNameGap
 
       // a, b, cという名前がある場合、[[a, c], [b]]という構造にする
       const nameColumns = [...Array(columnCount)].map((_, columnIndex) => {
@@ -113,7 +119,7 @@ export const calculateGroupPositions = ({
             })
 
             const nameY = group.groupName
-              ? groupNameHeight + group.groupNameGap
+              ? groupNameHeight + effectiveGroupNameGap
               : 0 // グループ名があればギャップ分下にずらす
 
             // 上の名前までの高さを計算
@@ -126,7 +132,7 @@ export const calculateGroupPositions = ({
                   fontFamily,
                   fontSize: prevFontSize,
                 })
-                return acc + prevHeight + group.nameGap
+                return acc + prevHeight + effectiveNameGap
               }, 0)
 
             return {
@@ -146,7 +152,9 @@ export const calculateGroupPositions = ({
       })
 
       const characterNames = group.names.map((name, index) => {
-        const nameY = group.groupName ? groupNameHeight + group.groupNameGap : 0 // グループ名があればギャップ分下にずらす
+        const nameY = group.groupName
+          ? groupNameHeight + effectiveGroupNameGap
+          : 0 // グループ名があればギャップ分下にずらす
 
         const nameFontSize = name.fontSize ?? fontSize
         const { height: nameHeight } = getCharacterDimensions({
@@ -174,7 +182,7 @@ export const calculateGroupPositions = ({
               fontFamily,
               fontSize: prevFontSize,
             })
-            return acc + prevHeight + group.nameGap
+            return acc + prevHeight + effectiveNameGap
           }, 0)
 
         return {
@@ -189,14 +197,16 @@ export const calculateGroupPositions = ({
       const columnHeights = nameColumns.map((column) =>
         column.reduce(
           (acc, name, index) =>
-            acc + name.height + (index < column.length - 1 ? group.nameGap : 0),
+            acc +
+            name.height +
+            (index < column.length - 1 ? effectiveNameGap : 0),
           0,
         ),
       )
 
       const groupHeight =
         Math.max(...columnHeights) +
-        (group.groupName ? groupNameHeight + group.groupNameGap : 0)
+        (group.groupName ? groupNameHeight + effectiveGroupNameGap : 0)
 
       currentY += groupHeight + groupGap // 次のグループまでの間隔
 

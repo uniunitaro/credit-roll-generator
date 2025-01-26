@@ -1,10 +1,6 @@
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
-import {
-  DEFAULT_COLUMNS,
-  DEFAULT_GROUP_NAME_GAP,
-  DEFAULT_NAME_GAP,
-} from '~/constants/constants'
+import { DEFAULT_COLUMNS } from '~/constants/constants'
 import type { GroupType, GroupWithName, Name, NameGroup } from '~/types/name'
 
 export const nameGroupIdsAtom = atom<string[]>([crypto.randomUUID()])
@@ -15,8 +11,8 @@ export const nameGroupFamily = atomFamily((id: string) =>
     type: 'normal',
     groupName: '',
     columns: DEFAULT_COLUMNS,
-    nameGap: DEFAULT_NAME_GAP,
-    groupNameGap: DEFAULT_GROUP_NAME_GAP,
+    nameGap: undefined,
+    groupNameGap: undefined,
     nameIds: [crypto.randomUUID()],
   }),
 )

@@ -28,6 +28,8 @@ const NameCanvas: FC<{
     groupGap,
     fontColor,
     canvasBgColor,
+    nameGap,
+    groupNameGap,
   } = useAtomValue(settingAtom)
 
   const groups = useAtomValue(allGroupsAtom)
@@ -39,6 +41,8 @@ const NameCanvas: FC<{
     columnGap,
     groupGap,
     groupNameFontSize,
+    nameGap,
+    groupNameGap,
   })
 
   const {

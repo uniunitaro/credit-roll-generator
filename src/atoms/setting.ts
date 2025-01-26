@@ -8,6 +8,8 @@ import {
   DEFAULT_FONT_SIZE,
   DEFAULT_GROUP_GAP,
   DEFAULT_GROUP_NAME_FONT_SIZE,
+  DEFAULT_GROUP_NAME_GAP,
+  DEFAULT_NAME_GAP,
 } from '~/constants/constants'
 import type { Setting } from '~/types/setting'
 
@@ -20,4 +22,6 @@ export const settingAtom = atom<Setting>({
   characterFontSize: DEFAULT_CHARACTER_FONT_SIZE,
   columnGap: DEFAULT_COLUMN_GAP,
   groupGap: DEFAULT_GROUP_GAP,
+  nameGap: DEFAULT_NAME_GAP,
+  groupNameGap: DEFAULT_GROUP_NAME_GAP,
 })
