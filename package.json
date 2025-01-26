@@ -30,7 +30,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-konva": "^19.0.2",
-    "react-use": "^17.6.0"
+    "react-use": "^17.6.0",
+    "valibot": "0.42.1"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

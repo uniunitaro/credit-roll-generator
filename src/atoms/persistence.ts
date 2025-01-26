@@ -1,17 +1,20 @@
 import { atom } from 'jotai'
-import type { Name, NameGroup } from '~/types/name'
-import type { Setting } from '~/types/setting'
+import * as v from 'valibot'
+import { nameGroupSchema, nameSchema } from '~/types/name'
+import { settingSchema } from '~/types/setting'
 import { nameFamily, nameGroupFamily, nameGroupIdsAtom } from './names'
 import { settingAtom } from './setting'
 
 const STORAGE_KEY = 'credit-roll-state'
 
-type StorageState = {
-  groupIds: string[]
-  groups: NameGroup[]
-  names: Name[]
-  setting: Setting
-}
+const storageStateSchema = v.object({
+  groupIds: v.fallback(v.array(v.string()), []),
+  groups: v.fallback(v.array(nameGroupSchema), []),
+  names: v.fallback(v.array(nameSchema), []),
+  setting: settingSchema,
+})
+
+type StorageState = v.InferOutput<typeof storageStateSchema>
 
 // 状態を保存するatom
 export const saveStateAtom = atom(null, (get) => {
@@ -42,23 +45,23 @@ export const loadStateAtom = atom(null, (get, set) => {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (!stored) return
 
-    const state = JSON.parse(stored) as StorageState
+    const parsedState = v.parse(storageStateSchema, JSON.parse(stored))
 
     // グループIDsの復元
-    set(nameGroupIdsAtom, state.groupIds)
+    set(nameGroupIdsAtom, parsedState.groupIds)
 
     // グループの復元
-    for (const group of state.groups) {
+    for (const group of parsedState.groups) {
       set(nameGroupFamily(group.id), group)
     }
 
     // namesの復元
-    for (const name of state.names) {
+    for (const name of parsedState.names) {
       set(nameFamily(name.id), name)
     }
 
     // 設定の復元
-    set(settingAtom, state.setting)
+    set(settingAtom, parsedState.setting)
   } catch (error) {
     console.error('Failed to load state:', error)
   }
