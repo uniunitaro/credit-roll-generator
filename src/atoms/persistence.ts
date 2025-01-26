@@ -16,8 +16,8 @@ const storageStateSchema = v.object({
 
 type StorageState = v.InferOutput<typeof storageStateSchema>
 
-// 状態を保存するatom
-export const saveStateAtom = atom(null, (get) => {
+// 状態をJSONデータに変換するatom
+export const stateToJsonAtom = atom(null, (get) => {
   const groupIds = get(nameGroupIdsAtom)
   const groups = groupIds.map((id) => get(nameGroupFamily(id)))
   const names = groups.flatMap((group) =>
@@ -32,20 +32,34 @@ export const saveStateAtom = atom(null, (get) => {
     setting,
   }
 
+  return JSON.stringify(state)
+})
+
+// JSONデータをlocalStorageに保存するatom
+export const saveStateAtom = atom(null, (get, set) => {
+  const jsonState = set(stateToJsonAtom)
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+    localStorage.setItem(STORAGE_KEY, jsonState)
   } catch (error) {
     console.error('Failed to save state:', error)
   }
 })
 
-// 状態を復元するatom
-export const loadStateAtom = atom(null, (get, set) => {
+export const loadStorage = () => {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (!stored) return
+    const state = localStorage.getItem(STORAGE_KEY)
+    if (!state) return null
+    return JSON.parse(state)
+  } catch (error) {
+    console.error('Failed to load state from storage:', error)
+    return null
+  }
+}
 
-    const parsedState = v.parse(storageStateSchema, JSON.parse(stored))
+// JSONデータから状態を復元するatom
+export const loadStateAtom = atom(null, (get, set, state: unknown) => {
+  try {
+    const parsedState = v.parse(storageStateSchema, state)
 
     // グループIDsの復元
     set(nameGroupIdsAtom, parsedState.groupIds)
@@ -63,6 +77,6 @@ export const loadStateAtom = atom(null, (get, set) => {
     // 設定の復元
     set(settingAtom, parsedState.setting)
   } catch (error) {
-    console.error('Failed to load state:', error)
+    console.error('Failed to parse state:', error)
   }
 })

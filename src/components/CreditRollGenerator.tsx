@@ -7,7 +7,7 @@ import type { FC, RefObject } from 'react'
 import { useEffect } from 'react'
 import { css } from 'styled-system/css'
 import { grid } from 'styled-system/patterns'
-import { loadStateAtom, saveStateAtom } from '~/atoms/persistence'
+import { loadStateAtom, loadStorage, saveStateAtom } from '~/atoms/persistence'
 import type { NameCanvasRef } from './NameCanvas'
 import NameEditor from './NameEditor'
 import NameTreeView from './treeView/NameTreeView'
@@ -21,11 +21,15 @@ type Props = {
 
 const CreditRollGenerator: FC<Props> = ({ stageRef, nameCanvasRef }) => {
   const loadState = useSetAtom(loadStateAtom)
+
   const saveState = useSetAtom(saveStateAtom)
 
   // 初回マウント時に状態を復元
   useEffect(() => {
-    loadState()
+    const state = loadStorage()
+    if (state) {
+      loadState(state)
+    }
   }, [loadState])
 
   // 状態変更を監視して保存
